@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 6, in <module>
-    from chainconsumer import ChainConsumer
-ModuleNotFoundError: No module named 'chainconsumer'
