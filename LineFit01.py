@@ -18,7 +18,9 @@ import numpy as np
 import matplotlib as mpl
 from functools import partial
 
-
+#============================================
+warnings.filterwarnings("ignore", category=FutureWarning)
+numpyro.set_host_device_count(6)
 
 #============================================
 #Utility Funcs
@@ -196,7 +198,7 @@ def model(data):
 
     #Lag and scaling of respone lines
     lags = numpyro.sample('lags', numpyro.distributions.Uniform(0,  180*4),  sample_shape=(Nbands-1,))
-    amps = numpyro.sample('amps', numpyro.distributions.Uniform(0,  10),    sample_shape=(Nbands-1,))
+    amps = numpyro.sample('amps', numpyro.distributions.Uniform(0,  100),    sample_shape=(Nbands-1,))
 
     #Means
     means = numpyro.sample('means', numpyro.distributions.Uniform(-100,100), sample_shape=(Nbands,))
@@ -232,10 +234,15 @@ if __name__=="__main__":
         data=np.loadtxt(url)
         lcs.append({
             "T": data[:,0],
-            "Y": data[:,1],
+            "Y": data[:,1]-np.min(data[:,1]),
             "E": data[:,2],
         })
     lcs = lc_to_banded(lcs)
+
+    lcs['T']-=np.min(lcs['T'])
+
+    out, out_keys = flatten_dict(lcs)
+    np.savetxt("banded_data.dat", out)
 
     #Construct and run sampler
     sampler = numpyro.infer.MCMC(infer.NUTS(model), num_chains=300, num_warmup=200, num_samples=600)
