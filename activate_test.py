@@ -7,3 +7,5 @@ mo = donetime.tm_mon
 da = donetime.tm_mday
 
 outstr = "Program started / finished at %i:%i on %i / %i" %(hr, mi, mo, da)
+
+print(outstr)
