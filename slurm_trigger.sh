@@ -2,8 +2,8 @@
 #SBATCH --job-name=getafixtestjob
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --mem-per-cpu=1G
-#SBATCH --time=0-01:00:00
+#SBATCH --mem-per-cpu=32G
+#SBATCH --time=0-10:00:00
 #SBATCH --array=1-1
 
 # Load the necessary modules
