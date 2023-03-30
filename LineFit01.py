@@ -245,7 +245,7 @@ if __name__=="__main__":
     np.savetxt("banded_data.dat", out)
 
     #Construct and run sampler
-    sampler = numpyro.infer.MCMC(infer.NUTS(model), num_chains=300, num_warmup=200, num_samples=600)
+    sampler = numpyro.infer.MCMC(infer.NUTS(model), num_chains=1, num_warmup=200, num_samples=600)
     sampler.run(jax.random.PRNGKey(0),lcs)
     output = sampler.get_samples()
     output.pop('means')
