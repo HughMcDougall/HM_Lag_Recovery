@@ -228,14 +228,16 @@ def main():
     print("Running. with %i device counts" %args.no_cores)
 
     #Load in data
-    if False:
+    if True:
         cont_url  = "./Data/B1-2940510474_CIV/2940510474_CIV_exp.txt"
         line1_url = "./Data/B1-2940510474_CIV/2940510474_gBand.txt"
         line2_url = "./Data/B1-2940510474_CIV/2940510474_MgII.txt"
+        out_url = "./Data/B1-2940510474_CIV/"
     else:
         cont_url  = "./Data/Data-fake/cont.dat"
         line1_url = "./Data/Data-fake/line1.dat"
-        line2_url = "./Data/Data-fake/line2.dat"     
+        line2_url = c
+        out_url = "./Data/Data-fake/"
 
     #Read files and sort into banded form
     lcs_unbanded = []
@@ -265,7 +267,7 @@ def main():
     #Construct and run sampler
     sampler = numpyro.infer.MCMC(
         infer.NUTS(model,init_strategy=infer.init_to_value(values=init_params), step_size =1E-2)
-                                 , num_chains=1, num_warmup=200, num_samples=600, progress_bar=False)
+                                 , num_chains=300, num_warmup=200, num_samples=600, progress_bar=False)
     sampler.run(jax.random.PRNGKey(0),lcs)
 
     #=======================
@@ -274,8 +276,8 @@ def main():
 
     out,out_keys = flatten_dict(output)
 
-    np.savetxt("./Data/B1-2940510474_CIV/outchain.dat",out)
-    np.savetxt("./Data/B1-2940510474_CIV/outchain_keys.dat",out_keys,fmt="%s")
+    np.savetxt(out_url+"outchain.dat",out)
+    np.savetxt(out_url+"outchain_keys.dat",out_keys,fmt="%s")
 
 if __name__=="__main__":
     main()
