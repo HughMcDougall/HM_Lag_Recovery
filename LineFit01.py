@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from argparse import ArgumentParser
 
 import warnings
 import os
@@ -19,8 +20,7 @@ import matplotlib as mpl
 from functools import partial
 
 #============================================
-warnings.filterwarnings("ignore", category=FutureWarning)
-numpyro.set_host_device_count(6)
+
 
 #============================================
 #Utility Funcs
@@ -216,8 +216,16 @@ def model(data):
 
 #============================================
 #Main Runtime Test
-if __name__=="__main__":
-    print("Running.")
+def main():
+    ap = ArgumentParser(description='This is a test argparse file')
+    ap.add_argument('-Ncores', '--no_cores', metavar='Ncores', type=int,    help='Number of devices to feed to jax',         default=1)
+    args = ap.parse_args()
+    
+    warnings.filterwarnings("ignore", category=FutureWarning)
+    numpyro.set_host_device_count(args.no_cores)
+
+    #=======================
+    print("Running. with %i device counts" %args.no_cores)
 
     #Load in data
     if False:
@@ -228,6 +236,7 @@ if __name__=="__main__":
         cont_url  = "./Data/Data-fake/cont.dat"
         line1_url = "./Data/Data-fake/line1.dat"
         line2_url = "./Data/Data-fake/line2.dat"     
+
     #Read files and sort into banded form
     lcs_unbanded = []
     for url in [cont_url,line1_url,line2_url]:
@@ -244,6 +253,8 @@ if __name__=="__main__":
     out, out_keys = flatten_dict(lcs)
     np.savetxt("banded_data.dat", out)
 
+    #=======================    
+
     init_params={
         'log_tau': np.log(400),
         'log_sigma_c': 0,
@@ -254,8 +265,10 @@ if __name__=="__main__":
     #Construct and run sampler
     sampler = numpyro.infer.MCMC(
         infer.NUTS(model,init_strategy=infer.init_to_value(values=init_params), step_size =1E-2)
-                                 , num_chains=1, num_warmup=50, num_samples=100)
+                                 , num_chains=1, num_warmup=200, num_samples=600, progress_bar=False)
     sampler.run(jax.random.PRNGKey(0),lcs)
+
+    #=======================
     output = dict(sampler.get_samples())
     output.pop('means')
 
@@ -263,3 +276,8 @@ if __name__=="__main__":
 
     np.savetxt("./Data/B1-2940510474_CIV/outchain.dat",out)
     np.savetxt("./Data/B1-2940510474_CIV/outchain_keys.dat",out_keys,fmt="%s")
+
+if __name__=="__main__":
+    main()
+    
+
