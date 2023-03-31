@@ -186,15 +186,11 @@ def model(data):
     Main model, to be fed to a numpyro NUTS object, with banded 'data' as an object
     '''
     #Continuum properties
-    log_sigma   = numpyro.sample('log_sigma',   numpyro.distributions.Uniform(-5,5))
-    log_tau     = numpyro.sample('log_tau',     numpyro.distributions.Uniform(0,10))
+    log_sigma_c = numpyro.sample('log_sigma_c',   numpyro.distributions.Uniform(-5,5))
+    log_tau     = numpyro.sample('log_tau',     numpyro.distributions.Uniform(2,7))
 
     #Find maximum number of bands in modelling
     Nbands = jnp.max(data['bands'])+1
-
-    #Though we fit in logspace, we need non-log space properties for feeding to the GP
-    cont_scale  = numpyro.deterministic('cont_scale',   jnp.exp(log_sigma))
-    tau_d       = numpyro.deterministic('tau_d',        jnp.exp(log_tau))
 
     #Lag and scaling of respone lines
     lags = numpyro.sample('lags', numpyro.distributions.Uniform(0,  180*4),  sample_shape=(Nbands-1,))
@@ -205,7 +201,7 @@ def model(data):
 
     params = {
         'log_tau': log_tau,
-        'log_sigma_c': log_sigma,
+        'log_sigma_c': log_sigma_c,
         'lags': lags,
         'amps': amps,
         'means': means,
@@ -224,30 +220,43 @@ if __name__=="__main__":
     print("Running.")
 
     #Load in data
-    cont_url  = "./Data/B1-2940510474_CIV/2940510474_CIV_exp.txt"
-    line1_url = "./Data/B1-2940510474_CIV/2940510474_gBand.txt"
-    line2_url = "./Data/B1-2940510474_CIV/2940510474_MgII.txt"
-
+    if False:
+        cont_url  = "./Data/B1-2940510474_CIV/2940510474_CIV_exp.txt"
+        line1_url = "./Data/B1-2940510474_CIV/2940510474_gBand.txt"
+        line2_url = "./Data/B1-2940510474_CIV/2940510474_MgII.txt"
+    else:
+        cont_url  = "./Data/Data-fake/cont.dat"
+        line1_url = "./Data/Data-fake/line1.dat"
+        line2_url = "./Data/Data-fake/line2.dat"     
     #Read files and sort into banded form
-    lcs = []
+    lcs_unbanded = []
     for url in [cont_url,line1_url,line2_url]:
         data=np.loadtxt(url)
-        lcs.append({
+        lcs_unbanded.append({
             "T": data[:,0],
             "Y": data[:,1]-np.min(data[:,1]),
             "E": data[:,2],
         })
-    lcs = lc_to_banded(lcs)
+    lcs = lc_to_banded(lcs_unbanded)
 
     lcs['T']-=np.min(lcs['T'])
 
     out, out_keys = flatten_dict(lcs)
     np.savetxt("banded_data.dat", out)
 
+    init_params={
+        'log_tau': np.log(400),
+        'log_sigma_c': 0,
+        'amps': np.array([np.std(lcs_unbanded[1]['Y']*2),np.std(lcs_unbanded[1]['Y']*2)]),
+        'means': np.array([0,0,0]),
+    }
+
     #Construct and run sampler
-    sampler = numpyro.infer.MCMC(infer.NUTS(model), num_chains=1, num_warmup=200, num_samples=600)
+    sampler = numpyro.infer.MCMC(
+        infer.NUTS(model,init_strategy=infer.init_to_value(values=init_params), step_size =1E-2)
+                                 , num_chains=1, num_warmup=50, num_samples=100)
     sampler.run(jax.random.PRNGKey(0),lcs)
-    output = sampler.get_samples()
+    output = dict(sampler.get_samples())
     output.pop('means')
 
     out,out_keys = flatten_dict(output)
