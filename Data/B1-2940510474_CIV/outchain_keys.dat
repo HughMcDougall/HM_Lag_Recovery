@@ -1,8 +1,15 @@
 amps_0
 amps_1
+<<<<<<< HEAD
 cont_scale
 lags_0
 lags_1
 log_sigma
 log_tau
 tau_d
+=======
+lags_0
+lags_1
+log_sigma_c
+log_tau
+>>>>>>> 263a5de47e7b6e6055fc38867950686f553449c6
