@@ -1,0 +1,13 @@
+good login of ./SIMBA_jobstatus.dat in get_args
+Traceback (most recent call last):
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 87, in <module>
+    main()
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 56, in main
+    data=np.loadtxt(url)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/numpy/lib/npyio.py", line 1042, in loadtxt
+    fh = np.lib._datasource.open(fname, 'rt', encoding=encoding)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/numpy/lib/_datasource.py", line 193, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/numpy/lib/_datasource.py", line 532, in open
+    raise FileNotFoundError(f"{path} not found.")
+FileNotFoundError: ./Data/real_data/real_data/00-B-2925372393/cont.dat not found.
