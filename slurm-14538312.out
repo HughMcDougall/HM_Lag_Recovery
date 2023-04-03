@@ -1,5 +1,0 @@
-No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
-/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py:268: UserWarning: There are not enough devices to run parallel chains: expected 300 but got 6. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(300)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
-  sampler = numpyro.infer.MCMC(
-LLVM ERROR: pthread_create failed: Resource temporarily unavailable
-/var/spool/slurmd/job14538312/slurm_script: line 16: 129975 Aborted                 python LineFit01.py -Ncores 6
