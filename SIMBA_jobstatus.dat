@@ -1,6 +1,6 @@
 	finished	start_time	finish_time	ID	cont_url	line1_url	line2_url	out_url
-0	False	21:56 Mon 03/04	               	2925372393	./Data/real_data/B-2925372393/cont.dat	./Data/real_data/B-2925372393/MGII.dat	./Data/real_data/B-2925372393/CIV.dat	./Data/real_data/B-2925372393/
-1	False	22:02 Mon 03/04	               	2925373860	./Data/real_data/B-2925373860/cont.dat	./Data/real_data/B-2925373860/MGII.dat	./Data/real_data/B-2925373860/CIV.dat	./Data/real_data/B-2925373860/
+0	False	               	               	2925372393	./Data/real_data/B-2925372393/cont.dat	./Data/real_data/B-2925372393/MGII.dat	./Data/real_data/B-2925372393/CIV.dat	./Data/real_data/B-2925372393/
+1	False	               	               	2925373860	./Data/real_data/B-2925373860/cont.dat	./Data/real_data/B-2925373860/MGII.dat	./Data/real_data/B-2925373860/CIV.dat	./Data/real_data/B-2925373860/
 2	False	               	               	2925375402	./Data/real_data/B-2925375402/cont.dat	./Data/real_data/B-2925375402/MGII.dat	./Data/real_data/B-2925375402/CIV.dat	./Data/real_data/B-2925375402/
 3	False	               	               	2925420688	./Data/real_data/B-2925420688/cont.dat	./Data/real_data/B-2925420688/MGII.dat	./Data/real_data/B-2925420688/CIV.dat	./Data/real_data/B-2925420688/
 4	False	               	               	2925515125	./Data/real_data/B-2925515125/cont.dat	./Data/real_data/B-2925515125/MGII.dat	./Data/real_data/B-2925515125/CIV.dat	./Data/real_data/B-2925515125/
