@@ -2,7 +2,7 @@
 #SBATCH --job-name=LineFit01
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task -2
+#SBATCH --cpus-per-task 2
 #SBATCH --mem-per-cpu=5G
 #SBATCH --time=0-30:00:00
 #SBATCH --array=0-0
