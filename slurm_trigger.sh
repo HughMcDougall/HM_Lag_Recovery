@@ -16,7 +16,7 @@ conda activate lag_conda
 python activate_test.py > _start.txt
 
 # Run your Python script with SLURM_ARRAY_TASK_ID as argument
-python LineFit01.py -Ncores 1 -Nchains 1 -Nburn 0 -Nsamples 1 -i $SLURM_ARRAY_TASK_ID
+python LineFit01.py -Ncores 2 -Nchains 2 -Nburn 0 -Nsamples 1 -i $SLURM_ARRAY_TASK_ID
 
 #If finished properly, print the time to a 'done' file
 python activate_test.py > _done.txt
