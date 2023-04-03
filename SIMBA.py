@@ -100,23 +100,33 @@ def make(args=None, table_url=_def_tab_url):
     '''
     Makes a job status table /w args. 
     '''
-    print("Making table at %s" %table_url)
-    #MISSINGNO: Warning for over-writing existing
-
     #------------------
     #MISSINGNO - different input types
+
+    #------------------
+    #Safety Checks for over-writing existing
+    for name in ["finished", "start_time", "finish_time", "comment"]:
+        assert name not in args.keys(), "Cannot have arg name %s when making job table" %name
+    
+    print("Making table at %s" %table_url)
+
+    #------------------
     if args!=None:
         Njobs = len(args[list(args.keys())[0]])
 
     #------------------
     #Make and save dataframe
-    df = pd.DataFrame({"finished":[False]*Njobs, "start_time":[" "*len(_timef())]*Njobs, "finish_time":[" "*len(_timef())]*Njobs} | args)
+    df = pd.DataFrame({"finished":[False]*Njobs,
+                       "start_time":[" "*len(_timef())]*Njobs,
+                       "finish_time":[" "*len(_timef())]*Njobs,
+                       "comment":[" "*len(_timef())]*Njobs
+                       } | args)
     df.to_csv(table_url, sep="\t")
 
 #----------------------
 
 @_safetyload
-def start(i, table_url=_def_tab_url):
+def start(i, table_url=_def_tab_url, comment=None):
     '''
     Marks a job as started
     '''
@@ -128,14 +138,16 @@ def start(i, table_url=_def_tab_url):
     table.loc[i,"finished"] = False
     table.loc[i,"start_time"] = " "*len(_timef())
     table.loc[i,"finish_time"] = " "*len(_timef())
+    table.loc[i,"comment"] = " "
     
     #Locate index i, write to job start time
     table.loc[i,"start_time"] = _timef()
+    if type(comment)!=type(None): table.loc[i,"comment"] = comment
 
     table.to_csv(table_url, sep="\t")
 
 @_safetyload
-def finish(i, table_url=_def_tab_url):
+def finish(i, table_url=_def_tab_url, comment=None):
     #MISSINGNO - print warning if job not started
     
     #Load table
@@ -144,6 +156,8 @@ def finish(i, table_url=_def_tab_url):
     #Locate index i, write to job start time
     table.loc[i,"finished"] = True
     table.loc[i,"finish_time"] = _timef()
+
+    if type(comment)!=type(None): table.loc[i,"comment"] = comment
 
     table.to_csv(table_url, sep="\t")
     
@@ -158,6 +172,7 @@ def reset(i=None, table_url=_def_tab_url):
     table.loc[i,"finished"] = False
     table.loc[i,"start_time"] = " "*len(_timef())
     table.loc[i,"finish_time"] = " "*len(_timef())
+    table.loc[i,"comment"] = " "
 
     table.to_csv(table_url, sep="\t")
 
