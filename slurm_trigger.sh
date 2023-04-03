@@ -8,6 +8,7 @@
 #SBATCH --array=0-0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=hmgetafix@gmail.com
+#SBATCH --output=./slurm_logs/slurm-%j.out
 
 # Load the necessary modules
 module load anaconda3/5.2.0
