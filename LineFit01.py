@@ -74,7 +74,7 @@ def main():
     }
 
 
-    SIMBA.start(args.i)
+    SIMBA.start(args.i, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(Nchains, Nsamples, Nburn, Ncores))
     output = fit_single_source(banded_data, params=MCMC_params) #Main MCMC run
     SIMBA.finish(args.i, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(Nchains, Nsamples, Nburn, Ncores))
 
