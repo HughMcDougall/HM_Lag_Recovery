@@ -41,6 +41,7 @@ def main():
     ap.add_argument('-Nsamples', '--Nsamples',     metavar='Nsamples', type=int,       help='Number of samples',                        default=600)
     ap.add_argument('-step_size', '--step_size', metavar='step_size', type=float,   help='Step Size in HMC',                         default=1E-2)
     ap.add_argument('-progress_bar', '--progress_bar', metavar='progress_bar', type=float,   help='numpyro progress bar',                         default=False)
+    ap.add_argument('-table', '--table', metavar='table', type=str,   help='SIMBA table to draw jobs from',                         default=SIMBA._def_tab_url)
     
     args = ap.parse_args()
 
@@ -83,9 +84,9 @@ def main():
     }
 
 
-    SIMBA.start(args.i, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
+    SIMBA.start(args.i, table_url = args.table, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
     output = fit_single_source(banded_data, params=MCMC_params) #Main MCMC run
-    SIMBA.finish(args.i, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
+    SIMBA.finish(args.i, table_url = args.table, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
 
     #Outputs
     out,out_keys = flatten_dict(output)
