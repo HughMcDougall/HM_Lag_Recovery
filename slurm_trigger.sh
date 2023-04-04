@@ -16,4 +16,4 @@ eval "$(conda shell.bash hook)"
 conda activate lag_conda
 
 # Run your Python script with SLURM_ARRAY_TASK_ID as argument
-python LineFit01.py -Ncores 8 -Nchains 8 -Nburn 2000 -Nsamples 6000 -i $SLURM_ARRAY_TASK_ID -progress_bar 1 -table SIMBAtest_status.dat
+python LineFit01.py -Ncores 8 -Nchains 8 -Nburn 200000 -Nsamples 1000 -i $SLURM_ARRAY_TASK_ID -progress_bar 1 -table SIMBAtest_status.dat

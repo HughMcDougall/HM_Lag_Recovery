@@ -86,20 +86,20 @@ def nline_model(data):
     # Numpyro Sampling
     
     #Continuum properties
-    log_sigma_c = numpyro.sample('log_sigma_c',   numpyro.distributions.Uniform(-2.3,2.3))
-    log_tau     = numpyro.sample('log_tau',       numpyro.distributions.Uniform(2,8))
+    log_sigma_c = numpyro.sample('log_sigma_c',   numpyro.distributions.Uniform(-1,1))
+    log_tau     = numpyro.sample('log_tau',       numpyro.distributions.Uniform(5,7))
 
     #Find maximum number of bands in modelling
     Nbands = jnp.max(data['bands'])+1
 
     #Lag and scaling of respone lines
-    lags = numpyro.sample('lags', numpyro.distributions.Uniform(0,  1000),  sample_shape=(Nbands-1,))
-    amps = numpyro.sample('amps', numpyro.distributions.Uniform(0,  10),    sample_shape=(Nbands-1,))
+    lags = numpyro.sample('lags', numpyro.distributions.Uniform(0,  500),  sample_shape=(Nbands-1,))
+    amps = numpyro.sample('amps', numpyro.distributions.Uniform(0,  2),    sample_shape=(Nbands-1,))
 
     #Means
-    means = numpyro.sample('means', numpyro.distributions.Uniform(-10,10), sample_shape=(Nbands,))
+    means = numpyro.sample('means', numpyro.distributions.Uniform(-2,2), sample_shape=(Nbands,))
     #----------------------------------
-    #Transform data
+    #Collect Params
 
     tform_params = {
         'tau': jnp.exp(log_tau),
@@ -108,10 +108,12 @@ def nline_model(data):
         'means': means,
     }
 
-    #Scale and shift data / create copy
+    #----------------------------------
+    #Transform data
 
     #tformed_data = _banded_tform(data, tform_params)
 
+    #DEBUG - Try adjusting manually
     tformed_data = copy(data)
 
     bands = tformed_data["bands"]
@@ -183,6 +185,7 @@ def fit_single_source(banded_data, MCMC_params=None):
     # MISSINGNO - update this to be more general
 
     Nbands = np.max(banded_data["bands"])+1
+
     init_params = {
         'log_tau': np.log(400),
         'log_sigma_c': 0,
@@ -191,6 +194,7 @@ def fit_single_source(banded_data, MCMC_params=None):
     }
 
     # Construct and run MCMC sampler
+    # DEBUG - Try using SA instead of NUTS
     '''
     sampler = numpyro.infer.MCMC(
         infer.NUTS(nline_model, init_strategy=infer.init_to_value(values=init_params), step_size=MCMC_params["step_size"]),
@@ -199,6 +203,7 @@ def fit_single_source(banded_data, MCMC_params=None):
         num_samples=MCMC_params["Nsample"],
         progress_bar=MCMC_params["progress_bar"])
     '''
+
     sampler = numpyro.infer.MCMC(
         infer.SA(nline_model, init_strategy=infer.init_to_value(values=init_params)),
         num_chains=MCMC_params["Nchain"],
@@ -214,6 +219,8 @@ def fit_single_source(banded_data, MCMC_params=None):
 
     return(output)
 
+
+#=================================================================
 if __name__=="__main__":
     from data_utils import array_to_lc, lc_to_banded, data_tform, normalize_tform
     #load some example data
