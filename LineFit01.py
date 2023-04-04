@@ -58,12 +58,16 @@ def main():
     lcs_unbanded = []
     for url in [job_args["cont_url"], job_args["line1_url"], job_args["line2_url"]]:
         data=np.loadtxt(url)
-        mean = np.sum(data[:,1]*data[:,2]**-2) / np.sum(data[:,2]**-2)
-        std  = np.sum((data[:,1]-mean)*data[:,2]**-2) / np.sum(data[:,2]**-2)
+        
+        w = data[:,2]**-2
+        wsum = np.sum(w)
+
+        mean = np.sum(data[:,1]* w) / wsum)
+        std  = np.sqrt( np.sum((data[:,1]-mean)**2 * w) / wsum)
         
         lcs_unbanded.append({
             "T": data[:,0],
-            "Y": ( data[:,1]-np.mean(data[:,1]) ) / std,
+            "Y": ( data[:,1]-mean ) / std,
             "E": data[:,2] / std ,
         })
 
