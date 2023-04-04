@@ -1,0 +1,34 @@
+/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py:66: RuntimeWarning: divide by zero encountered in true_divide
+  "Y": ( data[:,1]-np.mean(data[:,1]) ) / std,
+/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py:67: RuntimeWarning: divide by zero encountered in true_divide
+  "E": data[:,2] / std ,
+No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+/data/uqhmcdou/HM_Lag_Recovery/fitting_procedure.py:208: UserWarning: Site y: Out-of-support values provided to log prob method. The value argument should be within the support.
+  sampler.run(jax.random.PRNGKey(0), banded_data)
+SIMBA SAFETY LOAD DEBUG:	 get_args
+0 i
+good login of ./SIMBA_jobstatus.dat in get_args
+Beginning job 0 on job list SIMBAtest_status.dat)
+Data loaded. Saving normalized lightcurve to ./Data/data_fake/banded_data.dat
+SIMBA SAFETY LOAD DEBUG:	 start
+0 i
+good login of ./SIMBA_jobstatus.dat in start
+{'Ncores': 1, 'Nchain': 1, 'Nburn': 200, 'Nsample': 600, 'step_size': 0.01, 'progress_bar': 1.0}
+Traceback (most recent call last):
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 111, in <module>
+    main()
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 96, in main
+    output = fit_single_source(banded_data, params=MCMC_params) #Main MCMC run
+  File "/data/uqhmcdou/HM_Lag_Recovery/fitting_procedure.py", line 208, in fit_single_source
+    sampler.run(jax.random.PRNGKey(0), banded_data)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/numpyro/infer/mcmc.py", line 628, in run
+    states_flat, last_state = partial_map_fn(map_args)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/numpyro/infer/mcmc.py", line 410, in _single_chain_mcmc
+    new_init_state = self.sampler.init(
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/numpyro/infer/hmc.py", line 713, in init
+    init_params = self._init_state(
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/numpyro/infer/hmc.py", line 657, in _init_state
+    ) = initialize_model(
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/numpyro/infer/util.py", line 745, in initialize_model
+    raise RuntimeError(
+RuntimeError: Cannot find valid initial parameters. Please check your model again.
