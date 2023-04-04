@@ -94,18 +94,18 @@ def data_tform(data, tform_params=None, sort = False):
     Transforms a set of data by shifting, scaling and delaying
     '''
 
-    data = copy(data)
+    tformed_data = copy(data)
 
     #------------------------------
     
     #Determine type of input:
-    mode, Nbands = _lc_mode_and_size(data)
+    mode, Nbands = _lc_mode_and_size(tformed_data)
 
     #------------------------------
 
     #Get default values
     params = {"amps":   np.ones(Nbands),
-              "lags": np.zeros(Nbands),
+              "lags":   np.zeros(Nbands),
               "means":  np.zeros(Nbands)}
     
     if type(tform_params) != type(None):
@@ -115,7 +115,7 @@ def data_tform(data, tform_params=None, sort = False):
     
     #Apply transformation
     if mode == 'unbanded':
-        for signal, i in zip(data,range(Nbands)):
+        for signal, i in zip(tformed_data,range(Nbands)):
             signal["T"]-=params["lags"][i]
 
             signal["Y"]-=params["means"][i]
@@ -125,23 +125,25 @@ def data_tform(data, tform_params=None, sort = False):
                 
     elif mode == 'banded':
         
-        data["T"]-=params["lags"][data["bands"]]
+        tformed_data["T"]-=params["lags"][tformed_data["bands"]]
 
-        data["Y"]-=params["means"][data["bands"]]
-        data["Y"]/=params["amps"][data["bands"]]
+        tformed_data["Y"]-=params["means"][tformed_data["bands"]]
+        tformed_data["Y"]/=params["amps"][tformed_data["bands"]]
 
-        if "E" in data.keys(): data["E"]/=params["amps"][data["bands"]]
+        if "E" in data.keys(): tformed_data["E"]/=params["amps"][tformed_data["bands"]]
 
         if sort:
-            sort_inds = jnp.argsort(data["T"])
-            data["T"]=data["T"][sort_inds]
-            data["Y"]=data["Y"][sort_inds]
-            if "E" in data.keys(): data["E"]=data["E"][sort_inds]
+            sort_inds = jnp.argsort(tformed_data["T"])
+            tformed_data["T"]=tformed_data["T"][sort_inds]
+            tformed_data["Y"]=tformed_data["Y"][sort_inds]
+            if "E" in data.keys(): tformed_data["E"]=tformed_data["E"][sort_inds]
 
-    return(data)
+    return(tformed_data)
 
 def _banded_tform(data, tform_params):
+
     '''jit-friendly version of data transformation with less safety checks'''
+
     tformed_data = copy(data)
 
     tformed_data["T"] -= tform_params["lags"][data["bands"]]
@@ -151,7 +153,7 @@ def _banded_tform(data, tform_params):
 
     data["E"] /= tform_params["amps"][data["bands"]]
 
-    return(data)
+    return(tformed_data)
 
 def normalize_tform(data):
     '''

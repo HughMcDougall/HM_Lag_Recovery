@@ -25,7 +25,7 @@ from tinygp import GaussianProcess, kernels, transforms
 import tinygp
 
 from data_utils import _banded_tform
-
+from copy import deepcopy as copy
 
 #============================================
 #Utility Funcs
@@ -109,7 +109,7 @@ def nline_model(data):
     }
 
     #Scale and shift data / create copy
-    tformed_data = _banded_tform(data, tform_params = tform_params)
+    tformed_data = copy(data)
 
 
     #----------------------------------
