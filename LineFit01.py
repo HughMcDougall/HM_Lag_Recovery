@@ -49,7 +49,9 @@ def main():
     #GET AND NORMALIZE DATA
 
     #Get location of sources
-    job_args = SIMBA.get_args(args.i)
+    job_args = SIMBA.get_args(args.i, table_url=args.table)
+
+    print("Beginning job %i on job list %s)" %(args.i args.table))
 
     #Read files and sort into banded form.
     #Normalize and shift data in this runtime
@@ -69,7 +71,7 @@ def main():
 
     #Save data output to be safe
     out, out_keys = flatten_dict(banded_data)
-    print("Saving normalized lightcurve to %s" %(job_args["out_url"]+"banded_data.dat"))
+    print("Data loaded. Saving normalized lightcurve to %s" %(job_args["out_url"]+"banded_data.dat"))
     try:
         np.savetxt(job_args["out_url"]+"banded_data.dat",out)
     except:
