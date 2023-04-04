@@ -142,12 +142,12 @@ def data_tform(data, tform_params=None, sort = False):
 
 def _banded_tform(data, tform_params):
     '''jit-friendly version of data transformation with less safety checks'''
-    data = copy(data)
+    tformed_data = copy(data)
 
-    data["T"] -= tform_params["lags"][data["bands"]]
+    tformed_data["T"] -= tform_params["lags"][data["bands"]]
 
-    data["Y"] -= tform_params["means"][data["bands"]]
-    data["Y"] /= tform_params["amps"][data["bands"]]
+    tformed_data["Y"] -= tform_params["means"][data["bands"]]
+    tformed_data["Y"] /= tform_params["amps"][data["bands"]]
 
     data["E"] /= tform_params["amps"][data["bands"]]
 

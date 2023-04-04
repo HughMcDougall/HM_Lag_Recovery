@@ -115,7 +115,7 @@ def nline_model(data):
     #----------------------------------
     #Build and sample GP
     #Build TinyGP Process
-    gp, sort_inds = build_gp_single(data, tform_params)
+    gp, sort_inds = build_gp_single(tformed_data, tform_params)
 
     #Apply likelihood
     numpyro.sample('y', gp.numpyro_dist(), obs=tformed_data['Y'][sort_inds])
