@@ -62,7 +62,7 @@ def main():
         w = data[:,2]**-2
         wsum = np.sum(w)
 
-        mean = np.sum(data[:,1]* w) / wsum)
+        mean = np.sum(data[:,1]* w) / wsum
         std  = np.sqrt( np.sum((data[:,1]-mean)**2 * w) / wsum)
         
         lcs_unbanded.append({
