@@ -40,7 +40,8 @@ def main():
     ap.add_argument('-Nburn', '--Nburn',         metavar='Nburn',   type=int,       help='Number of burn-in steps',                  default=200)
     ap.add_argument('-Nsamples', '--Nsamples',     metavar='Nsamples', type=int,       help='Number of samples',                        default=600)
     ap.add_argument('-step_size', '--step_size', metavar='step_size', type=float,   help='Step Size in HMC',                         default=1E-2)
-
+    ap.add_argument('-progress_bar', '--progress_bar', metavar='progress_bar', type=float,   help='numpyro progress bar',                         default=False)
+    
     args = ap.parse_args()
 
     #=======================
@@ -78,7 +79,7 @@ def main():
         "Nburn":        args.Nburn,
         "Nsample":      args.Nsamples,
         "step_size":    args.step_size,
-        "progress_bar": True
+        "progress_bar": args.progress_bar
     }
 
 
