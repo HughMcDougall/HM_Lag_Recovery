@@ -1,0 +1,15 @@
+No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+SIMBA SAFETY LOAD DEBUG:	 get_args
+0 i
+good login of ./SIMBA_jobstatus.dat in get_args
+Beginning job 0 on job list SIMBAtest_status.dat)
+Data loaded. Saving normalized lightcurve to ./Data/data_fake/banded_data.dat
+SIMBA SAFETY LOAD DEBUG:	 start
+0 i
+good login of ./SIMBA_jobstatus.dat in start
+{'Ncores': 1, 'Nchain': 1, 'Nburn': 200, 'Nsample': 600, 'step_size': 0.01, 'progress_bar': 1.0}
+  0%|          | 0/800 [00:00<?, ?it/s]warmup:   0%|          | 1/800 [00:02<34:35,  2.60s/it, acc. prob=1.00]warmup:  13%|█▎        | 102/800 [00:02<00:13, 52.99it/s, acc. prob=0.79]sample:  26%|██▌       | 206/800 [00:02<00:04, 121.35it/s, acc. prob=0.56]sample:  39%|███▉      | 310/800 [00:02<00:02, 204.06it/s, acc. prob=0.55]sample:  52%|█████▏    | 414/800 [00:02<00:01, 299.32it/s, acc. prob=0.54]sample:  65%|██████▍   | 518/800 [00:03<00:00, 403.01it/s, acc. prob=0.54]sample:  78%|███████▊  | 622/800 [00:03<00:00, 509.15it/s, acc. prob=0.55]sample:  91%|█████████ | 727/800 [00:03<00:00, 612.53it/s, acc. prob=0.54]sample: 100%|██████████| 800/800 [00:03<00:00, 237.44it/s, acc. prob=0.53]
+SIMBA SAFETY LOAD DEBUG:	 finish
+0 i
+good login of ./SIMBA_jobstatus.dat in finish
+Job finished. Saving to ./Data/data_fake/outchain.dat
