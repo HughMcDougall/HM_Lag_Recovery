@@ -86,7 +86,8 @@ def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
         Y /= jnp.where(bands > 0, line_amps[bands - 1], 1) #Scale Line Signal & Errors
         E /= jnp.where(bands > 0, line_amps[bands - 1], 1)
 
-    Y-=means[bands]
+    #Y-=means[bands]
+    mean = partial(mean_func, params["means"])
 
     #------------
     #Sort data into gp friendly format
@@ -98,6 +99,7 @@ def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
         kernel,
         T[sort_inds],
         diag=E[sort_inds]**2,
+        mean=mean
                          )
 
     out = (gp, sort_inds)
