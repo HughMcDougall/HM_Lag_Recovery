@@ -5,11 +5,45 @@ handy functions for converting inputs and outputs
 
 '''
 
-import numpy as np
-import jax.numpy as jnp
+#===================================
 
+import numpy as np
+import pandas as pd
+import jax.numpy as jnp
+from copy import deepcopy as copy
 
 #===================================
+def _lc_mode_and_size(data):
+    if type(data)==list:
+        for item in data:
+            assert type(item)==dict and 'T' in item.keys() and 'Y' in item.keys(), "unbanded data in incorrect format in data_tform()"
+        mode = 'unbanded'
+        Nbands = len(data)
+        
+    elif type(data)==dict:
+        assert 'T' in data.keys() and 'Y' in data.keys() and 'bands' in data.keys(), "banded data of incorrect format in data_tform()"
+        mode = 'banded'
+        Nbands = np.max(data['bands']) + 1
+        
+    else:
+        
+        raise TypeError("Bad input data in data_tform()")
+
+    return(mode,Nbands)
+
+def array_to_lc(data):
+    if data.shape[1]==3:
+        return {"T": data[:,0],
+                "Y": data[:,1],
+                "E": data[:,2]
+            }
+    elif data.shape[1]==2:
+        return {"T": data[:,0],
+                "Y": data[:,1]
+            }
+    else:
+        raise TypeError("Band data input in array_to_lc()")
+    
 def lc_to_banded(lcs):
     '''
     Takes a list of dicts {T, Y, E} of lightcurve objects and returns as single banded lightcurve
@@ -55,6 +89,106 @@ def banded_to_lc(data):
 
     return(out)
 
+def data_tform(data, tform_params=None, sort = False):
+    '''
+    Transforms a set of data by shifting, scaling and delaying
+    '''
+
+    data = copy(data)
+
+    #------------------------------
+    
+    #Determine type of input:
+    mode, Nbands = _lc_mode_and_size(data)
+
+    #------------------------------
+
+    #Get default values
+    params = {"amps":   np.ones(Nbands),
+              "lags": np.zeros(Nbands),
+              "means":  np.zeros(Nbands)}
+    
+    if type(tform_params) != type(None):
+        params = params | tform_params
+
+    #------------------------------
+    
+    #Apply transformation
+    if mode == 'unbanded':
+        for signal, i in zip(data,range(Nbands)):
+            signal["T"]-=params["lags"][i]
+
+            signal["Y"]-=params["means"][i]
+            signal["Y"]/=params["amps"][i]
+
+            if "E" in signal.keys(): signal["E"]/=params["amps"][i]
+                
+    elif mode == 'banded':
+        
+        data["T"]-=params["lags"][data["bands"]]
+
+        data["Y"]-=params["means"][data["bands"]]
+        data["Y"]/=params["amps"][data["bands"]]
+
+        if "E" in data.keys(): data["E"]/=params["amps"][data["bands"]]
+
+        if sort:
+            sort_inds = jnp.argsort(data["T"])
+            data["T"]=data["T"][sort_inds]
+            data["Y"]=data["Y"][sort_inds]
+            if "E" in data.keys(): data["E"]=data["E"][sort_inds]
+
+    return(data)
+
+def _banded_tform(data, tform_params):
+    '''jit-friendly version of data transformation with less safety checks'''
+    data = copy(data)
+
+    data["T"] -= tform_params["lags"][data["bands"]]
+
+    data["Y"] -= tform_params["means"][data["bands"]]
+    data["Y"] /= tform_params["amps"][data["bands"]]
+
+    data["E"] /= tform_params["amps"][data["bands"]]
+
+    return(data)
+
+def normalize_tform(data):
+    '''
+    Returns paramaters to roughly normalize a set of data
+    '''
+    #------------------------------
+    
+    #Determine type of input:
+    mode, Nbands = _lc_mode_and_size(data)
+    
+    #------------------------------
+    #Get default values
+    params = {"amps":   np.ones(Nbands),
+              "lags":   np.zeros(Nbands),
+              "means":  np.zeros(Nbands)}
+
+    #Put in unbanded mode, easier to work with:
+    if mode =='banded':
+        unbanded_data = banded_to_lc(data)
+    else:
+        unbanded_data = data
+    tmin = np.min(unbanded_data[0]["T"])
+    
+    for signal, i in zip(unbanded_data, range(Nbands)):
+        tmin = min(tmin,np.min(signal["T"]))
+        
+        if "E" in signal.keys():
+            w = signal["E"]**-2
+        else:
+            w=np.ones(len(signal["T"]))
+        wsum = np.sum(w)
+
+        params["means"][i] = np.sum(signal["Y"]*w) / wsum
+        params["amps"][i]  = np.sqrt( np.sum( (signal["Y"] - params["means"][i])**2 * w) / wsum )
+    params["lags"]+=tmin
+    return(params)
+        
 #===================================
 def flatten_dict(dict):
     '''
@@ -90,3 +224,37 @@ def flatten_dict(dict):
             i+=1
 
     return(out,out_keys)
+
+
+#===================================
+if __name__=="__main__":
+    '''
+    Some simple unit tests
+    '''
+
+    #load some example data
+    cont  = array_to_lc(np.loadtxt("./Data/data_fake/cont.dat"))
+    line1 = array_to_lc(np.loadtxt("./Data/data_fake/line1.dat"))
+    line2 = array_to_lc(np.loadtxt("./Data/data_fake/line2.dat"))
+
+    #Offset times by 100
+    cont["T"]+=100
+    line1["T"]+=100
+    line2["T"]+=100
+
+    #Test band / unbanding
+    lcs_unbanded = [cont, line1, line2]
+    lcs_banded = lc_to_banded(lcs_unbanded)
+    lcs_unbanded = banded_to_lc(lcs_banded)
+
+    #Test normalizing
+    norm_param_unbanded = normalize_tform(lcs_unbanded)
+    norm_param_banded = normalize_tform(lcs_banded)
+
+    data_tform(lcs_unbanded)
+    data_tform(lcs_banded)
+
+    data_tform(lcs_unbanded,norm_param_unbanded)
+    data_tform(lcs_banded,norm_param_banded)
+
+    

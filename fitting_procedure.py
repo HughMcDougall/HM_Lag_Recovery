@@ -24,6 +24,8 @@ from numpyro import infer
 from tinygp import GaussianProcess, kernels, transforms
 import tinygp
 
+from data_utils import _banded_tform
+
 
 #============================================
 #Utility Funcs
@@ -50,61 +52,21 @@ def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
     :return:            Returns tinygp gp object and jnp.array of data sorted by lag-corrected time
     '''
 
-    #=Unpack data and params=
-
+    #Unpack data and params
     T, Y, E= data['T'], data['Y'], data['E']
-
-    tau     = jnp.exp(params['log_tau'])
-    sigma_c = jnp.exp(params['log_sigma_c'])
-
-    #If no bands provided, assume continuum only
-    if 'bands' in data.keys():
-        bands = data['bands']
-        cont_only  = False
-        Nbands = jnp.max(bands)
-    else:
-        bands = jnp.zeros_like(T,dtype='int32')
-        Nbands = 1
-        cont_only = True
-
-    means = params['means']
-
-    if not cont_only:
-        line_lags  = params['lags']
-        line_amps  = params['amps']
+    tau = params["tau"]
 
     #------------
-    #Apply data tform
-
-    #Apply Mean
-    Y-=means[bands]
-    
-    # Scale Continuum
-    Y /= jnp.where(bands == 0, sigma_c, 1) 
-    E /= jnp.where(bands == 0, sigma_c, 1)
-
-    if not cont_only:
-        #Apply Lags
-        T -= jnp.where(bands>0, line_lags[bands-1] , 0 )
-        
-        #Scale Line Signal & Errors
-        Y /= jnp.where(bands > 0, line_amps[bands - 1], 1) 
-        E /= jnp.where(bands > 0, line_amps[bands - 1], 1)
-
-    meanf = lambda t: 0
-
-    #------------
-    #Sort data into gp friendly format
+    #Data must be sorted for gp
     sort_inds = jnp.argsort(T)
 
-    #Make GP
     kernel = basekernel(scale = tau)
-    
+
+    #Make GP
     gp = GaussianProcess(
             kernel,
             T[sort_inds],
-            diag=E[sort_inds]**2,
-            mean=meanf,
+            diag=E[sort_inds]**2
         )
 
     out = (gp, sort_inds)
@@ -114,35 +76,15 @@ def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
 #============================================
 #Numpyro Side
 
-def continuum_model(data):
-    '''
-    Main model, to be fed to a numpyro NUTS object, with banded 'data' as an object
-    [MISSINGNO] - general params argument for search ranges
-    '''
-    
-    #Continuum properties
-    log_sigma_c = numpyro.sample('log_sigma_c',   numpyro.distributions.Uniform(-2.3,2.3))
-    log_tau     = numpyro.sample('log_tau',       numpyro.distributions.Uniform(2,8))
-
-    mean = numpyro.sample('mean', numpyro.distributions.Uniform(-10,10))
-
-    params = {
-        'log_tau': log_tau,
-        'log_sigma_c': log_sigma_c,
-        'mean': mean,
-    }
-
-    #Build TinyGP Process
-    gp, sort_inds = build_gp_single(data, params)
-
-    #Apply likelihood
-    numpyro.sample('y', gp.numpyro_dist(), obs=data['Y'][sort_inds])
-
 def nline_model(data):
     '''
     Main model, to be fed to a numpyro NUTS object, with banded 'data' as an object
     [MISSINGNO] - general params argument for search ranges
     '''
+
+    #----------------------------------
+    # Numpyro Sampling
+    
     #Continuum properties
     log_sigma_c = numpyro.sample('log_sigma_c',   numpyro.distributions.Uniform(-2.3,2.3))
     log_tau     = numpyro.sample('log_tau',       numpyro.distributions.Uniform(2,8))
@@ -156,21 +98,27 @@ def nline_model(data):
 
     #Means
     means = numpyro.sample('means', numpyro.distributions.Uniform(-10,10), sample_shape=(Nbands,))
+    #----------------------------------
+    #Transform data
 
-    params = {
-        'log_tau': log_tau,
-        'log_sigma_c': log_sigma_c,
-        'lags': lags,
-        'amps': amps,
+    tform_params = {
+        'tau': jnp.exp(log_tau),
+        'lags': jnp.concatenate([   jnp.array([0]),                     lags]),
+        'amps': jnp.concatenate([   jnp.array([jnp.exp(log_sigma_c)]),  amps]),
         'means': means,
     }
 
+    #Scale and shift data / create copy
+    tformed_data = _banded_tform(data, tform_params = tform_params)
+
+
+    #----------------------------------
+    #Build and sample GP
     #Build TinyGP Process
-    gp, sort_inds = build_gp_single(data, params)
+    gp, sort_inds = build_gp_single(data, tform_params)
 
     #Apply likelihood
-    numpyro.sample('y', gp.numpyro_dist(), obs=data['Y'][sort_inds])
-
+    numpyro.sample('y', gp.numpyro_dist(), obs=tformed_data['Y'][sort_inds])
 
 
 
@@ -186,7 +134,7 @@ default_MCMC_params={
     "progress_bar": True
 }
 
-def fit_single_source(banded_data, params=None):
+def fit_single_source(banded_data, MCMC_params=None):
     '''
     :param banded_data:
         'T': T,
@@ -194,7 +142,7 @@ def fit_single_source(banded_data, params=None):
         'E': E,
         'bands': bands,
 
-    :param params:
+    :param MCMC_params:
         "Ncores": 1,
         "Nchain": 300,
         "Nburn": 200,
@@ -207,15 +155,15 @@ def fit_single_source(banded_data, params=None):
     # =======================
 
     #Read input parameters
-    if type(params)==type(None):
-        params = dict(default_MCMC_params)
+    if type(MCMC_params)==type(None):
+        MCMC_params = dict(default_MCMC_params)
     else:
-        params = default_MCMC_params | params
+        MCMC_params = default_MCMC_params | MCMC_params
 
-    print(params)
+    print(MCMC_params)
 
     warnings.filterwarnings("ignore", category=FutureWarning)
-    numpyro.set_host_device_count( params["Ncores"] )
+    numpyro.set_host_device_count( MCMC_params["Ncores"] )
 
 
     # =======================
@@ -226,78 +174,17 @@ def fit_single_source(banded_data, params=None):
     init_params = {
         'log_tau': np.log(400),
         'log_sigma_c': 0,
-        'amps': np.ones(Nbands-1),
-        'means': np.zeros(Nbands),
+        'amps':  jnp.ones(Nbands-1),
+        'means': jnp.zeros(Nbands),
     }
 
     # Construct and run MCMC sampler
     sampler = numpyro.infer.MCMC(
-        infer.NUTS(nline_model, init_strategy=infer.init_to_value(values=init_params), step_size=params["step_size"]),
-        num_chains=params["Nchain"],
-        num_warmup=params["Nburn"],
-        num_samples=params["Nsample"],
-        progress_bar=params["progress_bar"])
-
-    sampler.run(jax.random.PRNGKey(0), banded_data)
-
-    # =======================
-    # Return as dictionary
-    output = dict(sampler.get_samples())
-    #output.pop('means')
-
-    return(output)
-
-
-def fit_continuum(banded_data, params=None):
-    '''
-    :param banded_data:
-        'T': T,
-        'Y': Y,
-        'E': E,
-        'bands': bands,
-
-    :param params:
-        "Ncores": 1,
-        "Nchain": 300,
-        "Nburn": 200,
-        "Nsample": 600,
-        "step_size": 1E-2
-
-    :return: as dict of outputs
-    '''
-
-    # =======================
-
-    #Read input parameters
-    if type(params)==type(None):
-        params = dict(default_MCMC_params)
-    else:
-        params = default_MCMC_params | params
-
-    print(params)
-
-    warnings.filterwarnings("ignore", category=FutureWarning)
-    numpyro.set_host_device_count( params["Ncores"] )
-
-
-    # =======================
-    # Choose some common sense initial parameters
-    # MISSINGNO - update this to be more general
-
-    Nbands = np.max(banded_data["bands"])+1
-    init_params = {
-        'log_tau': np.log(400),
-        'log_sigma_c': 0,
-        'mean': 0,
-    }
-
-    # Construct and run MCMC sampler
-    sampler = numpyro.infer.MCMC(
-        infer.SA(continuum_model, init_strategy=infer.init_to_value(values=init_params), step_size=params["step_size"]),
-        num_chains=params["Nchain"],
-        num_warmup=params["Nburn"],
-        num_samples=params["Nsample"],
-        progress_bar=params["progress_bar"])
+        infer.NUTS(nline_model, init_strategy=infer.init_to_value(values=init_params), step_size=MCMC_params["step_size"]),
+        num_chains=MCMC_params["Nchain"],
+        num_warmup=MCMC_params["Nburn"],
+        num_samples=MCMC_params["Nsample"],
+        progress_bar=MCMC_params["progress_bar"])
 
     sampler.run(jax.random.PRNGKey(0), banded_data)
 
@@ -306,3 +193,23 @@ def fit_continuum(banded_data, params=None):
     output = dict(sampler.get_samples())
 
     return(output)
+
+if __name__=="__main__":
+    from data_utils import array_to_lc, lc_to_banded, data_tform, normalize_tform
+    #load some example data
+    cont  = array_to_lc(np.loadtxt("./Data/data_fake/cont.dat"))
+    line1 = array_to_lc(np.loadtxt("./Data/data_fake/line1.dat"))
+    line2 = array_to_lc(np.loadtxt("./Data/data_fake/line2.dat"))
+
+    #Make into banded format
+    lcs_banded = lc_to_banded([cont, line1, line2])
+    lcs_banded = data_tform(lcs_banded, normalize_tform(lcs_banded))
+
+    #Fire off a short MCMC run
+    MCMC_params={
+        "Nchain": 1,
+        "Nburn": 10,
+        "Nsample": 20,
+        }
+
+    out = fit_single_source(banded_data = lcs_banded, MCMC_params=MCMC_params)

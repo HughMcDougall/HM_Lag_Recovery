@@ -97,7 +97,7 @@ def main():
 
 
     SIMBA.start(args.i, table_url = args.table, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
-    output = fit_single_source(banded_data, params=MCMC_params) #Main MCMC run
+    output = fit_single_source(banded_data, MCMC_params=MCMC_params) #Main MCMC run
     SIMBA.finish(args.i, table_url = args.table, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
 
     #Outputs
