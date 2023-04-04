@@ -89,6 +89,7 @@ def main():
     SIMBA.finish(args.i, table_url = args.table, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
 
     #Outputs
+    print("Job finished. Saving to %s" %(job_args["out_url"]+"outchain.dat") )
     out,out_keys = flatten_dict(output)
     np.savetxt(job_args["out_url"]+"outchain.dat",out)
     np.savetxt(job_args["out_url"]+"outchain_keys.dat",out_keys,fmt="%s")
