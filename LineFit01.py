@@ -34,7 +34,7 @@ def main():
     #COMMAND LINE ARGUMENTS
     ap = ArgumentParser(description='Reverberation mapping with numpyro')
 
-    ap.add_argument('-Ncores', '--no_cores',     metavar='Ncores',  type=int,       help='Number of devices to feed to jax',         default=1)
+    ap.add_argument('-Ncores', '--Ncores',     metavar='Ncores',  type=int,       help='Number of devices to feed to jax',         default=1)
     ap.add_argument('-i', '--i',                 metavar='i',       type=int,       help='job itteration number',                    default=0)
     ap.add_argument('-Nchains', '--Nchains',       metavar='Nchains',  type=int,       help='Number of MCMC chains',                    default=300)
     ap.add_argument('-Nburn', '--Nburn',         metavar='Nburn',   type=int,       help='Number of burn-in steps',                  default=200)
@@ -66,7 +66,7 @@ def main():
     #PERFORM FITTING
 
     MCMC_params ={
-        "Ncores": args.no_cores,
+        "Ncores": args.Ncores,
         "Nchain": args.Nchains,
         "Nburn": args.Nburn,
         "Nsample": args.Nsamples,
