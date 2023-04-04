@@ -59,8 +59,10 @@ def _safetyload(func):
 
         #Get input 'table_url'
         table_url=_def_tab_url
+        print("SIMBA SAFETY LOAD DEBUG:\t %s" %fname)
         for argname, arg in zip(argnames, args):
             if argname=='table_url': table_url=arg
+            print(arg,argname)
             break
 
         #Check if file exists
