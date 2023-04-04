@@ -1,5 +1,0 @@
-No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
-good login of ./SIMBA_jobstatus.dat in get_args
-good login of ./SIMBA_jobstatus.dat in start
-{'Ncores': 1, 'Nchain': 1, 'Nburn': 200, 'Nsample': 600, 'step_size': 0.01}
-good login of ./SIMBA_jobstatus.dat in finish

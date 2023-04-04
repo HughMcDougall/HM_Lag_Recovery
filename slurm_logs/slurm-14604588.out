@@ -1,8 +1,0 @@
-No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
-good login of ./SIMBA_jobstatus.dat in get_args
-Traceback (most recent call last):
-  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 87, in <module>
-    main()
-  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 77, in main
-    SIMBA.start(args.i, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(Nchains, Nsamples, Nburn, Ncores))
-NameError: name 'Nchains' is not defined

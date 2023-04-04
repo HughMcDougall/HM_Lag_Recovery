@@ -1,4 +1,0 @@
-No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
-/data/uqhmcdou/HM_Lag_Recovery/fitting_procedure.py:197: UserWarning: There are not enough devices to run parallel chains: expected 300 but got 1. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(300)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
-  sampler = numpyro.infer.MCMC(
-slurmstepd: error: *** JOB 14599765 ON smp-0-34 CANCELLED AT 2023-04-04T11:35:58 ***

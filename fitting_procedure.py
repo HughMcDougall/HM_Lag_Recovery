@@ -104,7 +104,7 @@ def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
 #============================================
 #Numpyro Side
 
-def nsource_model(data):
+def nline_model(data):
     '''
     Main model, to be fed to a numpyro NUTS object, with banded 'data' as an object
     [MISSINGNO] - general params argument for search ranges
@@ -121,7 +121,7 @@ def nsource_model(data):
     amps = numpyro.sample('amps', numpyro.distributions.Uniform(0,  10),    sample_shape=(Nbands-1,))
 
     #Means
-    means = numpyro.sample('means', numpyro.distributions.Uniform(-100,100), sample_shape=(Nbands,))
+    means = numpyro.sample('means', numpyro.distributions.Uniform(-10,10), sample_shape=(Nbands,))
 
     params = {
         'log_tau': log_tau,
@@ -195,7 +195,7 @@ def fit_single_source(banded_data, params=None):
 
     # Construct and run MCMC sampler
     sampler = numpyro.infer.MCMC(
-        infer.NUTS(nsource_model, init_strategy=infer.init_to_value(values=init_params), step_size=params["step_size"]),
+        infer.NUTS(nline_model, init_strategy=infer.init_to_value(values=init_params), step_size=params["step_size"]),
         num_chains=params["Nchain"],
         num_warmup=params["Nburn"],
         num_samples=params["Nsample"],
@@ -204,7 +204,8 @@ def fit_single_source(banded_data, params=None):
     sampler.run(jax.random.PRNGKey(0), banded_data)
 
     # =======================
+    # Return as dictionary
     output = dict(sampler.get_samples())
-    output.pop('means')
+    #output.pop('means')
 
     return(output)
