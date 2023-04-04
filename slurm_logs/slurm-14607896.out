@@ -1,4 +1,0 @@
-  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 65
-    mean = np.sum(data[:,1]* w) / wsum)
-                                      ^
-SyntaxError: unmatched ')'

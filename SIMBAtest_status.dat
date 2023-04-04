@@ -1,2 +1,2 @@
 	finished	start_time	finish_time	comment	ID	cont_url	line1_url	line2_url	out_url
-0	True	15:29 Tue 04/04	15:33 Tue 04/04	Job done /w 1 chains, 600 samples, 200 burn in and 1 cores	0	./Data/data_fake/cont.dat	./Data/data_fake/line1.dat	./Data/data_fake/line2.dat	./Data/data_fake/
+0	True	15:56 Tue 04/04	15:58 Tue 04/04	Job done /w 1 chains, 600 samples, 200 burn in and 1 cores	0	./Data/data_fake/cont.dat	./Data/data_fake/line1.dat	./Data/data_fake/line2.dat	./Data/data_fake/
