@@ -74,9 +74,9 @@ def main():
     }
 
 
-    SIMBA.start(args.i, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(Nchains, Nsamples, Nburn, Ncores))
+    SIMBA.start(args.i, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
     output = fit_single_source(banded_data, params=MCMC_params) #Main MCMC run
-    SIMBA.finish(args.i, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(Nchains, Nsamples, Nburn, Ncores))
+    SIMBA.finish(args.i, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
 
     #Outputs
     out,out_keys = flatten_dict(output)
