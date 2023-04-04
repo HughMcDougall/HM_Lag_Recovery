@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task 2
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=0-10:00:00
-#SBATCH --array=4-4
+#SBATCH --array=3-3
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=hmgetafix@gmail.com
 #SBATCH --output=./slurm_logs/slurm-%j.out
@@ -16,4 +16,4 @@ eval "$(conda shell.bash hook)"
 conda activate lag_conda
 
 # Run your Python script with SLURM_ARRAY_TASK_ID as argument
-python LineFit01.py -Ncores 2 -Nchains 4 -Nburn 200 -Nsamples 600 -i $SLURM_ARRAY_TASK_ID
+python LineFit01.py -Ncores 2 -Nchains 4 -Nburn 200 -Nsamples 600 -i $SLURM_ARRAY_TASK_ID -progress_bar 1
