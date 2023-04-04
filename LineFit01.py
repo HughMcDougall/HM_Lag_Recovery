@@ -69,8 +69,13 @@ def main():
 
     #Save data output to be safe
     out, out_keys = flatten_dict(banded_data)
-    np.savetxt(job_args["out_url"]+"banded_data.dat",out)
-
+    print("Saving normalized lightcurve to %s" %(job_args["out_url"]+"banded_data.dat"))
+    try:
+        np.savetxt(job_args["out_url"]+"banded_data.dat",out)
+    except:
+        print("Unable to locate output folder %s. Saving to local runtime folder instead" %job_args["out_url"])
+        np.savetxt("./banded_data.dat",out)
+        
     #=======================
     #PERFORM FITTING
 
@@ -96,8 +101,8 @@ def main():
         np.savetxt(job_args["out_url"]+"outchain_keys.dat",out_keys,fmt="%s")
     except:
         print("Unable to locate output folder %s. Saving to local runtime folder instead" %job_args["out_url"])
-        np.savetxt(job_args["out_url"]+"outchain.dat",out)
-        np.savetxt(job_args["out_url"]+"outchain_keys.dat",out_keys,fmt="%s")
+        np.savetxt("./outchain.dat",out)
+        np.savetxt("./outchain_keys.dat",out_keys,fmt="%s")
 
 if __name__=="__main__":
     main()
