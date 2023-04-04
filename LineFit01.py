@@ -67,7 +67,7 @@ def main():
     banded_data['T']-=np.min(banded_data['T'])
 
     #Save data output to be safe
-    out, out_keys = flatten_dict(output)
+    out, out_keys = flatten_dict(banded_data)
     np.savetxt(job_args["out_url"]+"banded_data.dat",out)
 
     #=======================
