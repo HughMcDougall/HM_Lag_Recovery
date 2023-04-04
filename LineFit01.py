@@ -59,28 +59,12 @@ def main():
     cont = array_to_lc(np.loadtxt(job_args["cont_url"]))
     line1 = array_to_lc(np.loadtxt(job_args["line1_url"]))
     line2 = array_to_lc(np.loadtxt(job_args["line2_url"]))
+
+
     lcs_unbanded = [cont, line1, line2]
-    lcs_unbanded = data_tform(lcs_unbanded,normalize_tform(lcs_unbanded))
-    lcs_banded = lc_to_banded(lcs_unbanded)
-
-
-    for url in [job_args["cont_url"], job_args["line1_url"], job_args["line2_url"]]:
-        data=np.loadtxt(url)
-        
-        w = data[:,2]**-2
-        wsum = np.sum(w)
-
-        mean = np.sum(data[:,1] * w) / wsum
-        std  = np.sqrt( np.sum((data[:,1]-mean)**2 * w) / wsum)
-        
-        lcs_unbanded.append({
-            "T": data[:,0],
-            "Y": ( data[:,1]-mean ) / std,
-            "E": data[:,2] / std ,
-        })
 
     banded_data = lc_to_banded(lcs_unbanded)
-    banded_data['T']-=np.min(banded_data['T'])
+    banded_data = data_tform(banded_data, normalize_tform(banded_data))
 
     #Save data output to be safe
     out, out_keys = flatten_dict(banded_data)
