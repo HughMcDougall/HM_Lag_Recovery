@@ -79,13 +79,16 @@ def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
     #Offset, lag, scale
     Y /= jnp.where(bands == 0, sigma_c, 1) # Scale Continuum
     E /= jnp.where(bands == 0, sigma_c, 1)
+
     if not cont_only:
         T -= jnp.where(bands>0, line_lags[bands-1] , 0 ) #Apply Lags
 
         Y /= jnp.where(bands > 0, line_amps[bands - 1], 1) #Scale Line Signal & Errors
         E /= jnp.where(bands > 0, line_amps[bands - 1], 1)
+
     Y-=means[bands]
 
+    #------------
     #Sort data into gp friendly format
     sort_inds = jnp.argsort(T)
 
@@ -110,8 +113,8 @@ def nline_model(data):
     [MISSINGNO] - general params argument for search ranges
     '''
     #Continuum properties
-    log_sigma_c = numpyro.sample('log_sigma_c',   numpyro.distributions.Uniform(-5,5))
-    log_tau     = numpyro.sample('log_tau',       numpyro.distributions.Uniform(2,7))
+    log_sigma_c = numpyro.sample('log_sigma_c',   numpyro.distributions.Uniform(-2.3,2.3))
+    log_tau     = numpyro.sample('log_tau',       numpyro.distributions.Uniform(2,8))
 
     #Find maximum number of bands in modelling
     Nbands = jnp.max(data['bands'])+1
@@ -146,7 +149,8 @@ default_MCMC_params={
     "Nchain": 300,
     "Nburn": 200,
     "Nsample": 600,
-    "step_size": 1E-2
+    "step_size": 1E-2,
+    "progress_bar": True
 }
 
 def fit_single_source(banded_data, params=None):
@@ -199,7 +203,7 @@ def fit_single_source(banded_data, params=None):
         num_chains=params["Nchain"],
         num_warmup=params["Nburn"],
         num_samples=params["Nsample"],
-        progress_bar=False)
+        progress_bar=params["progress_bar"])
 
     sampler.run(jax.random.PRNGKey(0), banded_data)
 

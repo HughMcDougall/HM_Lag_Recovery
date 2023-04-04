@@ -54,23 +54,31 @@ def main():
     lcs_unbanded = []
     for url in [job_args["cont_url"], job_args["line1_url"], job_args["line2_url"]]:
         data=np.loadtxt(url)
+        std=np.std(data[:,1])
+
         lcs_unbanded.append({
             "T": data[:,0],
-            "Y": (data[:,1]-np.mean(data[:,1])) / np.std(data[:,1]),
-            "E": data[:,2] / np.std(data[:,1]),
+            "Y": ( data[:,1]-np.mean(data[:,1]) ) / std,
+            "E": data[:,2] / std ,
         })
+
     banded_data = lc_to_banded(lcs_unbanded)
     banded_data['T']-=np.min(banded_data['T'])
+
+    #Save data output to be safe
+    out, out_keys = flatten_dict(output)
+    np.savetxt(job_args["out_url"]+"banded_data.dat",out)
 
     #=======================
     #PERFORM FITTING
 
     MCMC_params ={
-        "Ncores": args.Ncores,
-        "Nchain": args.Nchains,
-        "Nburn": args.Nburn,
-        "Nsample": args.Nsamples,
-        "step_size": args.step_size
+        "Ncores":       args.Ncores,
+        "Nchain":       args.Nchains,
+        "Nburn":        args.Nburn,
+        "Nsample":      args.Nsamples,
+        "step_size":    args.step_size,
+        "progress_bar": True
     }
 
 
