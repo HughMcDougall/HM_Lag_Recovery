@@ -109,7 +109,19 @@ def nline_model(data):
     }
 
     #Scale and shift data / create copy
-    tformed_data = _banded_tform(data, tform_params)
+
+    #tformed_data = _banded_tform(data, tform_params)
+
+    tformed_data = copy(data)
+
+    bands = tformed_data["bands"]
+    Y = tformed_data["Y"]
+    E = tformed_data["E"]
+    T = tformed_data["T"]
+
+    tformed_data["T"] = T   - tform_params["lags"][bands]
+    tformed_data["Y"] = (Y  -   means[bands])                / tform_params["amps"][bands]
+    tformed_data["E"] = E                                   / tform_params["amps"][bands]
 
 
     #----------------------------------
@@ -179,8 +191,16 @@ def fit_single_source(banded_data, MCMC_params=None):
     }
 
     # Construct and run MCMC sampler
+    '''
     sampler = numpyro.infer.MCMC(
         infer.NUTS(nline_model, init_strategy=infer.init_to_value(values=init_params), step_size=MCMC_params["step_size"]),
+        num_chains=MCMC_params["Nchain"],
+        num_warmup=MCMC_params["Nburn"],
+        num_samples=MCMC_params["Nsample"],
+        progress_bar=MCMC_params["progress_bar"])
+    '''
+    sampler = numpyro.infer.MCMC(
+        infer.SA(nline_model, init_strategy=infer.init_to_value(values=init_params)),
         num_chains=MCMC_params["Nchain"],
         num_warmup=MCMC_params["Nburn"],
         num_samples=MCMC_params["Nsample"],
@@ -213,3 +233,5 @@ if __name__=="__main__":
         }
 
     out = fit_single_source(banded_data = lcs_banded, MCMC_params=MCMC_params)
+
+    print("unit tests succesfful")
