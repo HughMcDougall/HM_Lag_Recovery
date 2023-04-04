@@ -91,8 +91,13 @@ def main():
     #Outputs
     print("Job finished. Saving to %s" %(job_args["out_url"]+"outchain.dat") )
     out,out_keys = flatten_dict(output)
-    np.savetxt(job_args["out_url"]+"outchain.dat",out)
-    np.savetxt(job_args["out_url"]+"outchain_keys.dat",out_keys,fmt="%s")
+    try:
+        np.savetxt(job_args["out_url"]+"outchain.dat",out)
+        np.savetxt(job_args["out_url"]+"outchain_keys.dat",out_keys,fmt="%s")
+    except:
+        print("Unable to locate output folder %s. Saving to local runtime folder instead" %job_args["out_url"])
+        np.savetxt(job_args["out_url"]+"outchain.dat",out)
+        np.savetxt(job_args["out_url"]+"outchain_keys.dat",out_keys,fmt="%s")
 
 if __name__=="__main__":
     main()
