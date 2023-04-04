@@ -293,7 +293,7 @@ def fit_continuum(banded_data, params=None):
 
     # Construct and run MCMC sampler
     sampler = numpyro.infer.MCMC(
-        infer.NUTS(continuum_model, init_strategy=infer.init_to_value(values=init_params), step_size=params["step_size"]),
+        infer.SA(continuum_model, init_strategy=infer.init_to_value(values=init_params), step_size=params["step_size"]),
         num_chains=params["Nchain"],
         num_warmup=params["Nburn"],
         num_samples=params["Nsample"],
