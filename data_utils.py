@@ -151,7 +151,7 @@ def _banded_tform(data, tform_params):
     tformed_data["Y"] -= tform_params["means"][data["bands"]]
     tformed_data["Y"] /= tform_params["amps"][data["bands"]]
 
-    data["E"] /= tform_params["amps"][data["bands"]]
+    tformed_data["E"] /= tform_params["amps"][data["bands"]]
 
     return(tformed_data)
 

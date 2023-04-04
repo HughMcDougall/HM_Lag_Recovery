@@ -109,7 +109,7 @@ def nline_model(data):
     }
 
     #Scale and shift data / create copy
-    tformed_data = copy(data)
+    tformed_data = _banded_tform(data, tform_params)
 
 
     #----------------------------------
