@@ -1,15 +1,0 @@
-No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
-SIMBA SAFETY LOAD DEBUG:	 get_args
-0 i
-good login of ./SIMBA_jobstatus.dat in get_args
-Beginning job 0 on job list SIMBAtest_status.dat)
-Data loaded. Saving normalized lightcurve to ./Data/data_fake/banded_data.dat
-SIMBA SAFETY LOAD DEBUG:	 start
-0 i
-good login of ./SIMBA_jobstatus.dat in start
-{'Ncores': 1, 'Nchain': 1, 'Nburn': 200, 'Nsample': 600, 'step_size': 0.01, 'progress_bar': 1.0}
-  0%|          | 0/800 [00:00<?, ?it/s]warmup:   0%|          | 1/800 [00:03<41:54,  3.15s/it, acc. prob=1.00]warmup:   4%|▍         | 31/800 [00:03<00:57, 13.32it/s, acc. prob=0.77]warmup:   8%|▊         | 62/800 [00:03<00:24, 30.60it/s, acc. prob=0.77]warmup:  12%|█▏        | 93/800 [00:03<00:13, 52.01it/s, acc. prob=0.75]warmup:  16%|█▌        | 124/800 [00:03<00:08, 77.37it/s, acc. prob=0.76]warmup:  19%|█▉        | 155/800 [00:03<00:06, 105.86it/s, acc. prob=0.74]warmup:  23%|██▎       | 186/800 [00:03<00:04, 136.05it/s, acc. prob=0.75]sample:  27%|██▋       | 217/800 [00:03<00:03, 166.13it/s, acc. prob=0.66]sample:  31%|███       | 248/800 [00:03<00:02, 194.17it/s, acc. prob=0.69]sample:  35%|███▍      | 279/800 [00:04<00:02, 219.00it/s, acc. prob=0.72]sample:  39%|███▉      | 310/800 [00:04<00:02, 239.80it/s, acc. prob=0.70]sample:  43%|████▎     | 341/800 [00:04<00:01, 256.56it/s, acc. prob=0.68]sample:  46%|████▋     | 372/800 [00:04<00:01, 269.55it/s, acc. prob=0.64]sample:  50%|█████     | 403/800 [00:04<00:01, 279.32it/s, acc. prob=0.64]sample:  54%|█████▍    | 434/800 [00:04<00:01, 286.55it/s, acc. prob=0.63]sample:  58%|█████▊    | 465/800 [00:04<00:01, 291.83it/s, acc. prob=0.62]sample:  62%|██████▏   | 496/800 [00:04<00:01, 295.61it/s, acc. prob=0.61]sample:  66%|██████▌   | 527/800 [00:04<00:00, 298.31it/s, acc. prob=0.60]sample:  70%|██████▉   | 558/800 [00:04<00:00, 300.14it/s, acc. prob=0.59]sample:  74%|███████▎  | 589/800 [00:05<00:00, 301.54it/s, acc. prob=0.58]sample:  78%|███████▊  | 620/800 [00:05<00:00, 302.49it/s, acc. prob=0.56]sample:  81%|████████▏ | 651/800 [00:05<00:00, 303.25it/s, acc. prob=0.56]sample:  85%|████████▌ | 682/800 [00:05<00:00, 303.78it/s, acc. prob=0.54]sample:  89%|████████▉ | 713/800 [00:05<00:00, 304.19it/s, acc. prob=0.52]sample:  93%|█████████▎| 744/800 [00:05<00:00, 304.38it/s, acc. prob=0.52]sample:  97%|█████████▋| 775/800 [00:05<00:00, 304.49it/s, acc. prob=0.51]sample: 100%|██████████| 800/800 [00:05<00:00, 138.58it/s, acc. prob=0.50]
-SIMBA SAFETY LOAD DEBUG:	 finish
-0 i
-good login of ./SIMBA_jobstatus.dat in finish
-Job finished. Saving to ./Data/data_fake/outchain.dat
