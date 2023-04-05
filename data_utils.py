@@ -215,13 +215,21 @@ def flatten_dict(dict):
     out_keys = [''] * Ncols
     i=0
 
-    for key,k in zip(keys,range(len(keys))):
+    for key,k in zip(keys, range(len(keys))) :
+
+        #Write each entry to a column
         for j in range(sizes[k]):
+
             if sizes[k]>1:
                 out[:, i] = dict[key][:,j]
                 out_keys[i] = keys[k]+"_"+str(j)
+
             else:
-                out[:, i] = dict[key][:]
+                if len(dict[key].shape)==1:
+                    out[:, i] = dict[key][:]
+                else:
+                    out[:, i] = dict[key][0,:]
+
                 out_keys[i] = keys[k]
             i+=1
 

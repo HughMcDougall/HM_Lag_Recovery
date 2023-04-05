@@ -96,7 +96,7 @@ def nline_model(data):
 
     #Lag and scaling of respone lines
     lags = numpyro.sample('lags', numpyro.distributions.Uniform(0,  500),  sample_shape=(Nbands-1,))
-    rel_amps = numpyro.sample('amps', numpyro.distributions.Uniform(0,  2),    sample_shape=(Nbands-1,))
+    rel_amps = numpyro.sample('rel_amps', numpyro.distributions.Uniform(0,  2),    sample_shape=(Nbands-1,))
 
     #Means
     means = numpyro.sample('means', numpyro.distributions.Uniform(-2,2), sample_shape=(Nbands,))
@@ -225,7 +225,7 @@ def fit_single_source(banded_data, MCMC_params=None):
 
 #=================================================================
 if __name__=="__main__":
-    from data_utils import array_to_lc, lc_to_banded, data_tform, normalize_tform
+    from data_utils import array_to_lc, lc_to_banded, data_tform, normalize_tform, flatten_dict
     #load some example data
     cont  = array_to_lc(np.loadtxt("./Data/data_fake/360day/cont.dat"))
     line1 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line1.dat"))
@@ -244,5 +244,6 @@ if __name__=="__main__":
         }
 
     out = fit_single_source(banded_data = lcs_banded, MCMC_params=MCMC_params)
+    results, keys = flatten_dict(out)
 
     print("unit tests succesfful")
