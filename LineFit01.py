@@ -42,31 +42,40 @@ def main():
     ap.add_argument('-step_size', '--step_size', metavar='step_size', type=float,   help='Step Size in HMC',                         default=1E-2)
     ap.add_argument('-progress_bar', '--progress_bar', metavar='progress_bar', type=float,   help='numpyro progress bar',                         default=False)
     ap.add_argument('-table', '--table', metavar='table', type=str,   help='SIMBA table to draw jobs from',                         default=SIMBA._def_tab_url)
-    
+
     args = ap.parse_args()
+    job_args = SIMBA.get_args(args.i, table_url=args.table)
 
     #=======================
     #GET AND NORMALIZE DATA
-
-    #Get location of sources
-    job_args = SIMBA.get_args(args.i, table_url=args.table)
-
-    print("Beginning job %i on job list %s)" %(args.i, args.table))
-
-    #Read files and sort into banded form.
-    #Normalize and shift data in this runtime
     from data_utils import array_to_lc, normalize_tform, data_tform
-    cont = array_to_lc(np.loadtxt(job_args["cont_url"]))
+
+    #Get targets
+    cont  = array_to_lc(np.loadtxt(job_args["cont_url"]))
     line1 = array_to_lc(np.loadtxt(job_args["line1_url"]))
     line2 = array_to_lc(np.loadtxt(job_args["line2_url"]))
 
-    #DEBUG - one line only
-    lcs_unbanded = [cont, line1]#], line2]
+    try:
+        mode = job_args["mode"]
 
+    except:
+        mode = "twoline"
+        print("!!!!!")
+    assert mode in ['twoline', "line1", "line2", "cont"]
+
+    if mode == "twoline": lcs_unbanded = [cont, line1, line2]
+    elif mode == "line1": lcs_unbanded = [cont, line1]
+    elif mode == "line2": lcs_unbanded = [cont, line2]
+    elif mode == "cont": lcs_unbanded = [cont]
+
+    print("Beginning job %i on job list %s with mode %s)" % (args.i, args.table, mode))
+
+    # Convert to banded and normalize
+    # DEBUG - No normalization for test data
     banded_data = lc_to_banded(lcs_unbanded)
-    #banded_data = data_tform(banded_data, normalize_tform(banded_data))
+    '''banded_data = data_tform(banded_data, normalize_tform(banded_data))'''
 
-    #Save normalized light curve for checks
+    # Output light curve for checking
     out, out_keys = flatten_dict(banded_data)
     print("Data loaded. Saving normalized lightcurve to %s" %(job_args["out_url"]+"banded_data.dat"))
     try:
@@ -88,11 +97,12 @@ def main():
     }
 
 
+    # Actually run
     SIMBA.start(args.i, table_url = args.table, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
     output = fit_single_source(banded_data, MCMC_params=MCMC_params) #Main MCMC run
     SIMBA.finish(args.i, table_url = args.table, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
 
-    #Outputs
+    # Outputs
     print("Job finished. Saving to %s" %(job_args["out_url"]+"outchain.dat") )
     out,out_keys = flatten_dict(output)
     try:

@@ -1,5 +1,3 @@
-amps_0
-amps_1
 lags_0
 lags_1
 log_sigma_c
@@ -7,3 +5,5 @@ log_tau
 means_0
 means_1
 means_2
+rel_amps_0
+rel_amps_1

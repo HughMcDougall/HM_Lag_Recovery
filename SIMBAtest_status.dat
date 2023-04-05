@@ -1,3 +1,5 @@
-	finished	start_time	finish_time	comment	ID	cont_url	line1_url	line2_url	out_url
-0	True	02:39 Wed 05/04	03:05 Wed 05/04	Job done /w 8 chains, 1000 samples, 200000 burn in and 8 cores	0	./Data/data_fake/360day/cont.dat	./Data/data_fake/360day/line1.dat	./Data/data_fake/360day/line2.dat	./Data/data_fake/360day/
-1	True	11:05 Wed 05/04	11:07 Wed 05/04	Job done /w 1 chains, 800 samples, 400 burn in and 1 cores	0	./Data/data_fake/clearsignal/cont.dat	./Data/data_fake/clearsignal/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal/
+	finished	start_time	finish_time	comment	ID	mode	cont_url	line1_url	line2_url	out_url
+0	True	12:48 Wed 05/04	12:48 Wed 05/04	Job done /w 1 chains, 1 samples, 3 burn in and 1 cores	0	twoline	./Data/data_fake/360day/cont.dat	./Data/data_fake/360day/line1.dat	./Data/data_fake/360day/line2.dat	./Data/data_fake/360day/
+1	False	 	 		1	twoline	./Data/data_fake/clearsignal/cont.dat	./Data/data_fake/clearsignal/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal/
+2	True	12:49 Wed 05/04	12:49 Wed 05/04	Job done /w 1 chains, 1 samples, 0 burn in and 1 cores	2	line1	./Data/data_fake/clearsignal_alt/cont.dat	./Data/data_fake/clearsignal_alt/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal_alt/
+3	True	12:48 Wed 05/04	12:48 Wed 05/04	Job done /w 1 chains, 1 samples, 0 burn in and 1 cores	3	cont	./Data/data_fake/clearsignal/cont.dat	./Data/data_fake/clearsignal/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal_contonly/

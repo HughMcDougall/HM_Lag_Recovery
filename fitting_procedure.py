@@ -78,6 +78,36 @@ def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
 #============================================
 #Numpyro Side
 
+def cont_model(data):
+    '''
+    Main model, to be fed to a numpyro NUTS object, with banded 'data' as an object
+    [MISSINGNO] - general params argument for search ranges
+    '''
+
+    # ----------------------------------
+    # Numpyro Sampling
+
+    log_sigma_c     = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(-2.5, 2.5))
+    log_tau         = numpyro.sample('log_tau', numpyro.distributions.Uniform(5, 7))
+
+    mean = numpyro.sample('mean', numpyro.distributions.Uniform(-2, 2))
+
+    # ----------------------------------
+    # Collect Params for tform
+    tformed_data = copy(data)
+    tformed_data["Y"]-=mean
+
+    tform_params = {"tau":jnp.exp(log_tau)}
+
+    # ----------------------------------
+    # Build and sample GP
+    # Build TinyGP Process
+    gp, sort_inds = build_gp_single(tformed_data, tform_params)
+
+    # Apply likelihood
+    numpyro.sample('y', gp.numpyro_dist(), obs=tformed_data['Y'][sort_inds])
+
+
 def nline_model(data):
     '''
     Main model, to be fed to a numpyro NUTS object, with banded 'data' as an object
@@ -95,6 +125,7 @@ def nline_model(data):
     Nbands = jnp.max(data['bands'])+1
 
     #Lag and scaling of respone lines
+
     lags = numpyro.sample('lags', numpyro.distributions.Uniform(0,  500),  sample_shape=(Nbands-1,))
     rel_amps = numpyro.sample('rel_amps', numpyro.distributions.Uniform(0,  2),    sample_shape=(Nbands-1,))
 
@@ -113,8 +144,9 @@ def nline_model(data):
     #----------------------------------
     #Transform data
 
-    #tformed_data = _banded_tform(data, tform_params)
+    tformed_data = _banded_tform(data, tform_params)
 
+    '''
     #DEBUG - Try tforming manually
     tformed_data = copy(data)
 
@@ -127,7 +159,7 @@ def nline_model(data):
     tformed_data["T"] = T   - tform_params["lags"][bands]
     tformed_data["Y"] = (Y  -   means[bands])                / tform_params["amps"][bands]
     tformed_data["E"] = E                                    / tform_params["amps"][bands]
-
+    '''
 
     #----------------------------------
     #Build and sample GP
@@ -188,17 +220,27 @@ def fit_single_source(banded_data, MCMC_params=None):
 
     Nbands = np.max(banded_data["bands"])+1
 
-    init_params = {
-        'log_tau': np.log(400),
-        'log_sigma_c': 0,
-        'rel_amps':  jnp.ones(Nbands-1),
-        'means': jnp.zeros(Nbands),
-    }
-
     # Construct and run MCMC sampler
+    if Nbands ==1:
+
+        init_params = {
+            'log_tau': np.log(400),
+            'log_sigma_c': 0,
+            'means': jnp.zeros(Nbands),
+        }
+        model = cont_model
+
+    else:
+        init_params = {
+            'log_tau': np.log(400),
+            'log_sigma_c': 0,
+            'rel_amps': jnp.ones(Nbands - 1),
+            'means': jnp.zeros(Nbands),
+        }
+        model = nline_model
     # DEBUG - Try using SA instead of NUTS
-    sampler_type = infer.NUTS(nline_model, init_strategy=infer.init_to_value(values=init_params), step_size=MCMC_params["step_size"])
-    #sampler_type = infer.SA(nline_model, init_strategy=infer.init_to_value(values=init_params))
+    sampler_type = infer.NUTS(model, init_strategy=infer.init_to_value(values=init_params), step_size=MCMC_params["step_size"])
+    #sampler_type = infer.SA(model, init_strategy=infer.init_to_value(values=init_params))
 
     sampler = numpyro.infer.MCMC(
         sampler_type,
@@ -220,13 +262,15 @@ def fit_single_source(banded_data, MCMC_params=None):
 if __name__=="__main__":
     from data_utils import array_to_lc, lc_to_banded, data_tform, normalize_tform, flatten_dict
     #load some example data
+
     cont  = array_to_lc(np.loadtxt("./Data/data_fake/360day/cont.dat"))
     line1 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line1.dat"))
     line2 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line2.dat"))
 
     #Make into banded format
     #lcs_banded = lc_to_banded([cont, line1, line2])
-    lcs_banded = lc_to_banded([cont, line1])
+    #lcs_banded = lc_to_banded([cont, line1])
+    lcs_banded = lc_to_banded([cont])
     lcs_banded = data_tform(lcs_banded, normalize_tform(lcs_banded))
 
     #Fire off a short MCMC run
