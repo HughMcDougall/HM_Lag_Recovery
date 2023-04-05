@@ -90,12 +90,13 @@ def cont_model(data):
     log_sigma_c     = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(-2.5, 2.5))
     log_tau         = numpyro.sample('log_tau', numpyro.distributions.Uniform(5, 7))
 
-    mean = numpyro.sample('mean', numpyro.distributions.Uniform(-2, 2))
+    mean = numpyro.sample('mean', numpyro.distributions.Uniform(-10, 10))
 
     # ----------------------------------
     # Collect Params for tform
     tformed_data = copy(data)
     tformed_data["Y"]-=mean
+    tformed_data["Y"] /= jnp.exp(log_sigma_c)
 
     tform_params = {"tau":jnp.exp(log_tau)}
 
@@ -118,7 +119,7 @@ def nline_model(data):
     # Numpyro Sampling
     
     #Continuum properties
-    log_sigma_c = numpyro.sample('log_sigma_c',   numpyro.distributions.Uniform(-1,1))
+    log_sigma_c = numpyro.sample('log_sigma_c',   numpyro.distributions.Uniform(-2.5, 2.5))
     log_tau     = numpyro.sample('log_tau',       numpyro.distributions.Uniform(5,7))
 
     #Find maximum number of bands in modelling
@@ -130,7 +131,7 @@ def nline_model(data):
     rel_amps = numpyro.sample('rel_amps', numpyro.distributions.Uniform(0,  2),    sample_shape=(Nbands-1,))
 
     #Means
-    means = numpyro.sample('means', numpyro.distributions.Uniform(-2,2), sample_shape=(Nbands,))
+    means = numpyro.sample('means', numpyro.distributions.Uniform(-10,10), sample_shape=(Nbands,))
     #----------------------------------
     #Collect Params for tform
 
@@ -144,6 +145,7 @@ def nline_model(data):
     #----------------------------------
     #Transform data
 
+    '''
     tformed_data = _banded_tform(data, tform_params)
 
     '''
@@ -159,7 +161,7 @@ def nline_model(data):
     tformed_data["T"] = T   - tform_params["lags"][bands]
     tformed_data["Y"] = (Y  -   means[bands])                / tform_params["amps"][bands]
     tformed_data["E"] = E                                    / tform_params["amps"][bands]
-    '''
+
 
     #----------------------------------
     #Build and sample GP
