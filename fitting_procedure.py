@@ -197,22 +197,15 @@ def fit_single_source(banded_data, MCMC_params=None):
 
     # Construct and run MCMC sampler
     # DEBUG - Try using SA instead of NUTS
+    sampler_type = infer.NUTS(nline_model, init_strategy=infer.init_to_value(values=init_params), step_size=MCMC_params["step_size"])
+    #sampler_type = infer.SA(nline_model, init_strategy=infer.init_to_value(values=init_params))
 
     sampler = numpyro.infer.MCMC(
-        infer.NUTS(nline_model, init_strategy=infer.init_to_value(values=init_params), step_size=MCMC_params["step_size"]),
+        sampler_type,
         num_chains=MCMC_params["Nchain"],
         num_warmup=MCMC_params["Nburn"],
         num_samples=MCMC_params["Nsample"],
         progress_bar=MCMC_params["progress_bar"])
-
-    '''
-    sampler = numpyro.infer.MCMC(
-        infer.SA(nline_model, init_strategy=infer.init_to_value(values=init_params)),
-        num_chains=MCMC_params["Nchain"],
-        num_warmup=MCMC_params["Nburn"],
-        num_samples=MCMC_params["Nsample"],
-        progress_bar=MCMC_params["progress_bar"])
-    '''
 
     sampler.run(jax.random.PRNGKey(0), banded_data)
 

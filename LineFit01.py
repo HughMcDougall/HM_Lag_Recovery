@@ -64,9 +64,9 @@ def main():
     lcs_unbanded = [cont, line1]#], line2]
 
     banded_data = lc_to_banded(lcs_unbanded)
-    banded_data = data_tform(banded_data, normalize_tform(banded_data))
+    #banded_data = data_tform(banded_data, normalize_tform(banded_data))
 
-    #Save data output to be safe
+    #Save normalized light curve for checks
     out, out_keys = flatten_dict(banded_data)
     print("Data loaded. Saving normalized lightcurve to %s" %(job_args["out_url"]+"banded_data.dat"))
     try:

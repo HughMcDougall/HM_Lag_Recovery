@@ -130,7 +130,8 @@ def data_tform(data, tform_params=None, sort = False):
         tformed_data["Y"]-=params["means"][tformed_data["bands"]]
         tformed_data["Y"]/=params["amps"][tformed_data["bands"]]
 
-        if "E" in data.keys(): tformed_data["E"]/=params["amps"][tformed_data["bands"]]
+        if "E" in data.keys():
+            tformed_data["E"]/=params["amps"][tformed_data["bands"]]
 
         if sort:
             sort_inds = jnp.argsort(tformed_data["T"])
@@ -243,9 +244,9 @@ if __name__=="__main__":
     '''
 
     #load some example data
-    cont  = array_to_lc(np.loadtxt("./Data/data_fake/360day/cont.dat"))
-    line1 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line1.dat"))
-    line2 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line2.dat"))
+    cont  = array_to_lc(np.loadtxt("./Data/data_fake/clearsignal/cont.dat"))
+    line1 = array_to_lc(np.loadtxt("./Data/data_fake/clearsignal/line1.dat"))
+    line2 = array_to_lc(np.loadtxt("./Data/data_fake/clearsignal/line2.dat"))
 
     #Offset times by 100
     cont["T"]+=100
