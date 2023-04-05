@@ -38,7 +38,7 @@ cols = ['b','r','g']
 for file,c in zip(["cont.dat", "line1.dat", "line2.dat"],cols):
     data = np.loadtxt(file)
     ax[0].errorbar(data[:,0],   data[:,1],  yerr=data[:,2], fmt='none', c=c)
-    break
+    
     
 ax[0].set_ylim([-5,5])
 ax[0].axhline(0,c='k', ls='--', lw=0.5)
@@ -47,7 +47,7 @@ for band,c in zip([0,1,2], cols):
     inds = np.where(SIGNAL[:,3]==band)[0]
     
     ax[1].errorbar(SIGNAL[:,0][inds],SIGNAL[:,1][inds],yerr=SIGNAL[:,2][inds],fmt='none',c=c)
-    break
+    
     
 ax[1].set_ylim([-5,5])
 ax[1].axhline(0,c='k', ls='--', lw=0.5)

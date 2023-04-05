@@ -235,9 +235,9 @@ if __name__=="__main__":
     '''
 
     #load some example data
-    cont  = array_to_lc(np.loadtxt("./Data/data_fake/cont.dat"))
-    line1 = array_to_lc(np.loadtxt("./Data/data_fake/line1.dat"))
-    line2 = array_to_lc(np.loadtxt("./Data/data_fake/line2.dat"))
+    cont  = array_to_lc(np.loadtxt("./Data/data_fake/360day/cont.dat"))
+    line1 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line1.dat"))
+    line2 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line2.dat"))
 
     #Offset times by 100
     cont["T"]+=100
@@ -246,6 +246,7 @@ if __name__=="__main__":
 
     #Test band / unbanding
     lcs_unbanded = [cont, line1, line2]
+    lcs_unbanded = [cont]
     lcs_banded = lc_to_banded(lcs_unbanded)
     lcs_unbanded = banded_to_lc(lcs_banded)
 
@@ -256,7 +257,9 @@ if __name__=="__main__":
     data_tform(lcs_unbanded)
     data_tform(lcs_banded)
 
-    data_tform(lcs_unbanded,norm_param_unbanded)
-    data_tform(lcs_banded,norm_param_banded)
+    data_tform(lcs_unbanded,    norm_param_unbanded)
+    data_tform(lcs_banded,      norm_param_banded)
+
+    print("Tests done")
 
     

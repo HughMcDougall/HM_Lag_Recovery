@@ -9,6 +9,7 @@ TODO
 HM 3/4
 '''
 
+#============================================
 import warnings
 
 import numpy as np
@@ -32,6 +33,7 @@ from copy import deepcopy as copy
 def mean_func(means, X):
     '''
     Utitlity function to take array of constants and return as gp-friendly functions
+    NOT USED HERE
     '''
     t, band = X
     return(means[band])
@@ -94,17 +96,17 @@ def nline_model(data):
 
     #Lag and scaling of respone lines
     lags = numpyro.sample('lags', numpyro.distributions.Uniform(0,  500),  sample_shape=(Nbands-1,))
-    amps = numpyro.sample('amps', numpyro.distributions.Uniform(0,  2),    sample_shape=(Nbands-1,))
+    rel_amps = numpyro.sample('amps', numpyro.distributions.Uniform(0,  2),    sample_shape=(Nbands-1,))
 
     #Means
     means = numpyro.sample('means', numpyro.distributions.Uniform(-2,2), sample_shape=(Nbands,))
     #----------------------------------
-    #Collect Params
+    #Collect Params for tform
 
     tform_params = {
         'tau': jnp.exp(log_tau),
         'lags': jnp.concatenate([   jnp.array([0]),                     lags]),
-        'amps': jnp.concatenate([   jnp.array([jnp.exp(log_sigma_c)]),  amps]),
+        'amps': jnp.concatenate([   jnp.array([1]),  rel_amps]) * jnp.exp(log_sigma_c),
         'means': means,
     }
 
@@ -113,17 +115,18 @@ def nline_model(data):
 
     #tformed_data = _banded_tform(data, tform_params)
 
-    #DEBUG - Try adjusting manually
+    #DEBUG - Try tforming manually
     tformed_data = copy(data)
 
     bands = tformed_data["bands"]
+
+    T = tformed_data["T"]
     Y = tformed_data["Y"]
     E = tformed_data["E"]
-    T = tformed_data["T"]
 
     tformed_data["T"] = T   - tform_params["lags"][bands]
     tformed_data["Y"] = (Y  -   means[bands])                / tform_params["amps"][bands]
-    tformed_data["E"] = E                                   / tform_params["amps"][bands]
+    tformed_data["E"] = E                                    / tform_params["amps"][bands]
 
 
     #----------------------------------
@@ -179,7 +182,6 @@ def fit_single_source(banded_data, MCMC_params=None):
     warnings.filterwarnings("ignore", category=FutureWarning)
     numpyro.set_host_device_count( MCMC_params["Ncores"] )
 
-
     # =======================
     # Choose some common sense initial parameters
     # MISSINGNO - update this to be more general
@@ -189,27 +191,28 @@ def fit_single_source(banded_data, MCMC_params=None):
     init_params = {
         'log_tau': np.log(400),
         'log_sigma_c': 0,
-        'amps':  jnp.ones(Nbands-1),
+        'rel_amps':  jnp.ones(Nbands-1),
         'means': jnp.zeros(Nbands),
     }
 
     # Construct and run MCMC sampler
     # DEBUG - Try using SA instead of NUTS
-    '''
+
     sampler = numpyro.infer.MCMC(
         infer.NUTS(nline_model, init_strategy=infer.init_to_value(values=init_params), step_size=MCMC_params["step_size"]),
         num_chains=MCMC_params["Nchain"],
         num_warmup=MCMC_params["Nburn"],
         num_samples=MCMC_params["Nsample"],
         progress_bar=MCMC_params["progress_bar"])
-    '''
 
+    '''
     sampler = numpyro.infer.MCMC(
         infer.SA(nline_model, init_strategy=infer.init_to_value(values=init_params)),
         num_chains=MCMC_params["Nchain"],
         num_warmup=MCMC_params["Nburn"],
         num_samples=MCMC_params["Nsample"],
         progress_bar=MCMC_params["progress_bar"])
+    '''
 
     sampler.run(jax.random.PRNGKey(0), banded_data)
 
@@ -224,12 +227,13 @@ def fit_single_source(banded_data, MCMC_params=None):
 if __name__=="__main__":
     from data_utils import array_to_lc, lc_to_banded, data_tform, normalize_tform
     #load some example data
-    cont  = array_to_lc(np.loadtxt("./Data/data_fake/cont.dat"))
-    line1 = array_to_lc(np.loadtxt("./Data/data_fake/line1.dat"))
-    line2 = array_to_lc(np.loadtxt("./Data/data_fake/line2.dat"))
+    cont  = array_to_lc(np.loadtxt("./Data/data_fake/360day/cont.dat"))
+    line1 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line1.dat"))
+    line2 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line2.dat"))
 
     #Make into banded format
-    lcs_banded = lc_to_banded([cont, line1, line2])
+    #lcs_banded = lc_to_banded([cont, line1, line2])
+    lcs_banded = lc_to_banded([cont, line1])
     lcs_banded = data_tform(lcs_banded, normalize_tform(lcs_banded))
 
     #Fire off a short MCMC run
