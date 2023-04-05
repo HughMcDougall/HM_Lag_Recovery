@@ -60,8 +60,8 @@ def main():
     line1 = array_to_lc(np.loadtxt(job_args["line1_url"]))
     line2 = array_to_lc(np.loadtxt(job_args["line2_url"]))
 
-
-    lcs_unbanded = [cont, line1, line2]
+    #DEBUG - one line only
+    lcs_unbanded = [cont, line1]#], line2]
 
     banded_data = lc_to_banded(lcs_unbanded)
     banded_data = data_tform(banded_data, normalize_tform(banded_data))
