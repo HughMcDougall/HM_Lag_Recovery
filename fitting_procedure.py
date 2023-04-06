@@ -62,7 +62,7 @@ def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
     #Data must be sorted for gp
     sort_inds = jnp.argsort(T)
 
-    kernel = basekernel(scale = tau)
+    kernel = basekernel(sigma = tau)
 
     #Make GP
     gp = GaussianProcess(
@@ -95,7 +95,7 @@ def cont_model(data):
     # ----------------------------------
     # Collect Params for tform
     tformed_data = copy(data)
-    tformed_data["Y"]-=mean
+    tformed_data["Y"] -=mean
     tformed_data["Y"] /= jnp.exp(log_sigma_c)
 
     tform_params = {"tau":jnp.exp(log_tau)}
