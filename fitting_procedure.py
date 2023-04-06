@@ -43,9 +43,24 @@ def mean_func(means, X):
 #Main Working Funcs
 #============================================
 
+
+@tinygp.helpers.dataclass
+class Multiband(tinygp.kernels.quasisep.Wrapper):
+    amplitudes: jnp.ndarray
+
+    def coord_to_sortable(self, X):
+        t, band = X
+        return t
+
+    def observation_model(self, X):
+        '''
+        :param X = (t, band)
+        '''
+        t, band = X
+        return self.amplitudes[band] * self.kernel.observation_model(t)
 #============================================
 #TinyGP side
-def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
+def build_gp_single(data, params, basekernel=tinygp.kernels.quasisep.Exp):
     '''
     Takes banded LC data and params, returns tinygp gaussian process
     :param data:        Banded lc as dictionary of form {T,Y,E,bands}
@@ -56,22 +71,29 @@ def build_gp_single(data, params, basekernel=tinygp.kernels.Exp):
 
     #Unpack data and params
     T, Y, E= data['T'], data['Y'], data['E']
-    tau = params["tau"]
+    bands = data['bands']
+
+    tau  = params["tau"]
+    amps = params['amps']
 
     #------------
     #Data must be sorted for gp
-    sort_inds = jnp.argsort(T)
 
-    kernel = basekernel(sigma = tau)
+    kernel = basekernel(scale = tau)
+
+    multi_kernel = Multiband(
+        amplitudes  =   amps,
+        kernel  =   kernel,
+    )
 
     #Make GP
     gp = GaussianProcess(
-            kernel,
-            T[sort_inds],
-            diag=E[sort_inds]**2
+            multi_kernel,
+            (T, bands),
+            diag=E**2
         )
 
-    out = (gp, sort_inds)
+    out = gp
     return(out)
 
 
@@ -96,17 +118,17 @@ def cont_model(data):
     # Collect Params for tform
     tformed_data = copy(data)
     tformed_data["Y"] -=mean
-    tformed_data["Y"] /= jnp.exp(log_sigma_c)
 
-    tform_params = {"tau":jnp.exp(log_tau)}
+    tform_params = {"tau":jnp.exp(log_tau),
+                    "amps":jnp.array([jnp.exp(log_sigma_c)]),}
 
     # ----------------------------------
     # Build and sample GP
     # Build TinyGP Process
-    gp, sort_inds = build_gp_single(tformed_data, tform_params)
+    gp = build_gp_single(tformed_data, tform_params)
 
     # Apply likelihood
-    numpyro.sample('y', gp.numpyro_dist(), obs=tformed_data['Y'][sort_inds])
+    numpyro.sample('y', gp.numpyro_dist(), obs=tformed_data['Y'])
 
 
 def nline_model(data):
@@ -154,22 +176,23 @@ def nline_model(data):
 
     bands = tformed_data["bands"]
 
-    T = tformed_data["T"]
-    Y = tformed_data["Y"]
-    E = tformed_data["E"]
+    tformed_data["T"] -=    tform_params["lags"][bands]
+    tformed_data["Y"] -=    means[bands]
 
-    tformed_data["T"] = T   - tform_params["lags"][bands]
-    tformed_data["Y"] = (Y  -   means[bands])                / tform_params["amps"][bands]
-    tformed_data["E"] = E                                    / tform_params["amps"][bands]
+    sort_inds = jnp.argsort(tformed_data["T"])
 
+    tformed_data["T"] = tformed_data["T"][sort_inds]
+    tformed_data["Y"] = tformed_data["Y"][sort_inds]
+    tformed_data["E"] = tformed_data["E"][sort_inds]
+    tformed_data["bands"] = tformed_data["bands"][sort_inds]
 
     #----------------------------------
     #Build and sample GP
     #Build TinyGP Process
-    gp, sort_inds = build_gp_single(tformed_data, tform_params)
+    gp = build_gp_single(tformed_data, tform_params)
 
     #Apply likelihood
-    numpyro.sample('y', gp.numpyro_dist(), obs=tformed_data['Y'][sort_inds])
+    numpyro.sample('y', gp.numpyro_dist(), obs=tformed_data["Y"])
 
 
 
@@ -273,7 +296,7 @@ if __name__=="__main__":
     #lcs_banded = lc_to_banded([cont, line1, line2])
     #lcs_banded = lc_to_banded([cont, line1])
     lcs_banded = lc_to_banded([cont])
-    lcs_banded = data_tform(lcs_banded, normalize_tform(lcs_banded))
+    #lcs_banded = data_tform(lcs_banded, normalize_tform(lcs_banded))
 
     #Fire off a short MCMC run
     MCMC_params={
