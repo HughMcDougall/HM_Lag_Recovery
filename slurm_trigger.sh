@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task 8
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=0-5:00:00
-#SBATCH --array=0-6
+#SBATCH --array=0-5
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=hmgetafix@gmail.com
 #SBATCH --output=./slurm_logs/slurm-%j.out
