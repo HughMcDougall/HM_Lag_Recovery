@@ -7,13 +7,15 @@ SIGNAL = np.loadtxt("banded_data.dat")
 #==================================
 
 DATA = np.loadtxt("outchain.dat")
+NEST = np.loadtxt("outchain-nest.dat")
 KEYS = np.loadtxt("outchain_keys.dat", dtype="str_")
 
 c = ChainConsumer()
 c.add_chain(DATA, parameters = list(KEYS))
+c.add_chain(NEST, parameters = list(KEYS))
 
-truth = {"amps_0" : 1,
-         "amps_1" : 1,
+truth = {"rel_amps_0" : 1,
+         "rel_amps_1" : 1,
          "log_sigma_c" : 0,
          "log_tau" : 5.99,
          "means_0":0,
@@ -22,11 +24,13 @@ truth = {"amps_0" : 1,
 
 extents = {"amps_0" :       (0,10),
          "amps_1" :         (0,10),
-         "log_sigma_c" :    (-2.3,2.3),
+         "log_sigma_c" :    (-2.5,2.5),
          "log_tau" :        (2,8),
          "means_0":         (-10,10),
          "means_1":         (-10,10),
-         "means_2":         (-10,10)
+         "means_2":         (-10,10),
+         "lags_1":          (0,800),
+         "lags_2":          (0,800)
            }
 
 c.plotter.plot(filename ="./contours.png", truth=truth, extents=extents)

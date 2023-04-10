@@ -24,11 +24,9 @@ from data_utils import flatten_dict
 from modelling import model_cont, model_nline, model_1line, model_2line
 
 from config import *
-from nested_bootstrap import nested_burnin, nested_transform
+from nested_burnin import nested_burnin, nested_transform
 
 #============================================
-
-# ----------------------
 
 def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested = False):
     '''
@@ -55,7 +53,7 @@ def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested = F
     progress_bar = MCMC_params["progress_bar"]
     num_live     = MCMC_params["ns_num_live"]
     max_samples  = MCMC_params["ns_max_samples"]
-
+    targ_acc_prob= MCMC_params["targ_acc_prob"]
 
     # =======================
     # Identify the model type / band number
@@ -70,16 +68,22 @@ def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested = F
     else:
         raise TypeError("Cannot have more than 2 lines in current fit_procedure()")
 
+    if Nchain == 0:
+        nmodes = (2**(Nbands-1) + 1)
+        Nchain = int(nmodes*20 / (0.25)**2 )
+
     # =======================
     # Use nested sampling for initial pass
 
     print("Acquiring modes with nested sampling with %i live points" %num_live)
-    nest_results    = nested_burnin(data, nchains= Nchain, num_live_points=num_live, max_samples=max_samples)
+
+    nest_results    = nested_burnin(banded_data, nchains= Nchain, num_live_points=num_live, max_samples=max_samples)
     start_positions = nested_transform(nest_results) # Transformation required for passing to sampler.run()
 
     # =======================
     # Use NUTS HMC to refine contours
-    sampler_type = infer.NUTS(model, step_size=stepsize)
+
+    sampler_type = infer.NUTS(model, step_size=stepsize, target_accept_prob=targ_acc_prob)
     sampler = numpyro.infer.MCMC(
             sampler_type,
             num_chains  =   Nchain,
@@ -128,7 +132,7 @@ if __name__=="__main__":
 
     for data in [banded_2line, banded_1line, banded_cont]:
         print("Unit tests for %i lines: " %max(data["bands"]) )
-        out = fit_single_source(banded_data = data, MCMC_params=MCMC_params)
+        out = fit_single_source(banded_data = data, MCMC_params=MCMC_params, return_nested=False)
         results, keys = flatten_dict(out)
 
     print("Unit tests done")

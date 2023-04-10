@@ -1,5 +1,5 @@
 '''
-nested_bootstrap.py
+nested_burnin.py
 '''
 
 #==================================================
@@ -46,7 +46,7 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
         num_live_points = 50*num_modes
     if max_samples == 0:
         max_samples = num_live_points * 100
-    print("num_live:\t%i\tmax_samples:\t%i" % (num_live_points, max_samples))
+    print("In nested_burnin:\t num_live:\t%i\tmax_samples:\t%i" % (num_live_points, max_samples))
 
     assert nchains <= max_samples, "Too many samples being drawn from nested sampler"
 
@@ -150,17 +150,6 @@ if __name__=="__main__":
 
     print("Starting tests for fitting procedure")
 
-    extents = {
-               "log_sigma_c":[log_sigma_c_min, log_sigma_c_max],
-               "log_tau": [log_tau_min,log_tau_max],
-               "lags_1":[0,lag_max],
-               "lags_2": [0, lag_max],
-               "rel_amps_1": [0,rel_amp_max],
-               "rel_amps_2": [0, rel_amp_max],
-               "means_0": [mean_min, mean_max],
-               "means_1": [mean_min, mean_max],
-               "means_2": [mean_min, mean_max],
-               }
 
     # load some example data
     rootfol = "./Data/data_fake/150day-bad/"
@@ -180,14 +169,14 @@ if __name__=="__main__":
     datas = [banded_cont, banded_1line,banded_2line]
     models = [model_cont, model_1line, model_2line]
 
-    '''
+
     for i in [2,1,0]:
         data = datas[i]
         print("\t Unit tests for %i lines: " %max(data["bands"]) )
         nested_burnin_tformed(data, nchains=10, num_live_points=10, max_samples=20)
 
     print("Unit tests succesfful")
-    '''
+
 
     #==================================================================
     from chainconsumer import ChainConsumer
@@ -243,7 +232,7 @@ if __name__=="__main__":
 
     c= ChainConsumer()
     c.add_chain(nest_results)
-    c.plotter.plot(extents=extents)
+    c.plotter.plot(extents=plot_extents)
     plt.tight_layout()
     plt.title("Nested Sampling Results")
     plt.show()
@@ -262,7 +251,7 @@ if __name__=="__main__":
         print(key)
         print(NUTS_samples[key])
 
-    c2.plotter.plot(extents=extents)
+    c2.plotter.plot(extents=plot_extents)
     plt.tight_layout()
     plt.title("Nested Sampling Results")
     plt.show()

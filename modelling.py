@@ -7,23 +7,17 @@ HM 2023
 '''
 
 # ============================================
-import warnings
-
 import numpy as np
 
 import jax
 import jax.numpy as jnp
-# import jaxopt
 
 import numpyro
-from numpyro import distributions as dist
-from numpyro import infer
 
-from tinygp import GaussianProcess, kernels, transforms
+from tinygp import GaussianProcess
 import tinygp
 from config import *
 
-import data_utils
 from copy import deepcopy as copy
 
 
@@ -282,8 +276,8 @@ def model_nline(data, Nbands=3):
 # TESTING
 
 if __name__=="__main__":
-    from numpyro.infer import MCMC, SA, NUTS
-    from data_utils import array_to_lc, lc_to_banded, data_tform, normalize_tform, flatten_dict
+    from numpyro.infer import MCMC, NUTS
+    from data_utils import array_to_lc, lc_to_banded
 
     # load some example data
     cont  = array_to_lc(np.loadtxt("./Data/data_fake/360day/cont.dat"))
@@ -313,7 +307,7 @@ if __name__=="__main__":
         i+=1
 
 
-        sampler = MCMC(SA(model),
+        sampler = MCMC(NUTS(model),
                        num_chains=MCMC_params['Nchain'],
                        num_warmup=MCMC_params['Nburn'],
                        num_samples=MCMC_params['Nsample'],

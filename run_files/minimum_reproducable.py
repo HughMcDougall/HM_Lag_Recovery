@@ -4,7 +4,9 @@ An attempt at creating a minimum reproducable example of a model fit
 V1 - Continuum recovery
 '''
 
-#==================================================
+#============================================
+import sys
+sys.path.append("..")
 
 import matplotlib.pyplot as plt
 import numpy as np

@@ -25,11 +25,19 @@ mean_min = -10.0
 mean_max = 10.0
 
 #----------------------------------
-# Default seed values
-'''
-[MISSINGNO]
-'''
+# Default extents
 
+plot_extents = {
+    "log_sigma_c": [log_sigma_c_min, log_sigma_c_max],
+    "log_tau": [log_tau_min, log_tau_max],
+    "lags_1": [lag_min, lag_max],
+    "lags_2": [lag_min, lag_max],
+    "rel_amps_1": [lag_min, rel_amp_max],
+    "rel_amps_2": [lag_min, rel_amp_max],
+    "means_0": [mean_min, mean_max],
+    "means_1": [mean_min, mean_max],
+    "means_2": [mean_min, mean_max],
+}
 
 #----------------------------------
 # MCMC default values
@@ -39,9 +47,11 @@ default_MCMC_params={
     "Nchain": 300,
     "Nburn": 200,
     "Nsample": 600,
+
     "step_size": 1E-3,
     "progress_bar": True,
+    "targ_acc_prob": 0.9,
 
-    "ns-num_live":0,
-    "ns-max_samples":0
+    "ns_num_live":0,
+    "ns_max_samples":0
 }
