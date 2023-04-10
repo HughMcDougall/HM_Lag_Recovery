@@ -1,7 +1,7 @@
 	finished	start_time	finish_time	comment	ID	mode	cont_url	line1_url	line2_url	out_url
-0	FALSE	 	 	 	0	twoline	./Data/data_fake/360day/cont.dat	./Data/data_fake/360day/line1.dat	./Data/data_fake/360day/line2.dat	./Data/data_fake/360day/
-1	FALSE	 	 	 	1	twoline	./Data/data_fake/clearsignal/cont.dat	./Data/data_fake/clearsignal/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal/
-2	FALSE	 	 	 	2	line1	./Data/data_fake/clearsignal_alt/cont.dat	./Data/data_fake/clearsignal_alt/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal_alt/
-3	FALSE	 	 	 	3	cont	./Data/data_fake/clearsignal/cont.dat	./Data/data_fake/clearsignal/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal_contonly/
-4	FALSE	 	 	 	4	twoline	./Data/data_fake/150day-good/cont.dat	./Data/data_fake/150day-good/line1.dat	./Data/data_fake/150day-good/line2.dat	./Data/data_fake/150day-good/
-5	FALSE	 	 	 	5	twoline	./Data/data_fake/150day-bad/cont.dat	./Data/data_fake/150day-bad/line1.dat	./Data/data_fake/150day-bad/line2.dat	./Data/data_fake/150day-bad/
+0	False	08:31 Tue 11/04	               	Job started /w 0 chains, 400 samples, 200 burn in and 8 cores	0	twoline	./Data/data_fake/360day/cont.dat	./Data/data_fake/360day/line1.dat	./Data/data_fake/360day/line2.dat	./Data/data_fake/360day/
+1	False	08:31 Tue 11/04	               	Job started /w 0 chains, 400 samples, 200 burn in and 8 cores	1	twoline	./Data/data_fake/clearsignal/cont.dat	./Data/data_fake/clearsignal/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal/
+2	False	08:31 Tue 11/04	               	Job started /w 0 chains, 400 samples, 200 burn in and 8 cores	2	line1	./Data/data_fake/clearsignal_alt/cont.dat	./Data/data_fake/clearsignal_alt/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal_alt/
+3	False	08:31 Tue 11/04	               	Job started /w 0 chains, 400 samples, 200 burn in and 8 cores	3	cont	./Data/data_fake/clearsignal/cont.dat	./Data/data_fake/clearsignal/line1.dat	./Data/data_fake/clearsignal/line2.dat	./Data/data_fake/clearsignal_contonly/
+4	False	08:31 Tue 11/04	               	Job started /w 0 chains, 400 samples, 200 burn in and 8 cores	4	twoline	./Data/data_fake/150day-good/cont.dat	./Data/data_fake/150day-good/line1.dat	./Data/data_fake/150day-good/line2.dat	./Data/data_fake/150day-good/
+5	False	 	 	 	5	twoline	./Data/data_fake/150day-bad/cont.dat	./Data/data_fake/150day-bad/line1.dat	./Data/data_fake/150day-bad/line2.dat	./Data/data_fake/150day-bad/
