@@ -85,7 +85,7 @@ def model(data):
 
 def build_gp(T, E, tau, sigma, mean, rel_amp, bands):
 
-    base_kernel = tinygp.kernels.quasisep.Matern32(scale = tau)
+    base_kernel = tinygp.kernels.quasisep.Exp(scale = tau)
 
     kernel = Multiband(
         amplitudes  =   jnp.array([1,rel_amp])*sigma,
@@ -139,15 +139,17 @@ def loss(lag,log_tau):
 
 if __name__=="__main__":
     from data_utils import array_to_lc, lc_to_banded, data_tform, normalize_tform, flatten_dict
+
     #load some example data
 
-    cont  = array_to_lc(np.loadtxt("./Data/data_fake/360day/cont.dat"))
-    line1 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line1.dat"))
+    cont  = array_to_lc(np.loadtxt("./Data/data_fake/clearsignal/cont.dat"))
+    line1 = array_to_lc(np.loadtxt("./Data/data_fake/clearsignal/line2.dat"))
+
 
     #Make into banded format
     data = lc_to_banded([cont, line1])
     rel_amp = 1
-    lag = 360
+    lag = 250
 
     #================================
 
@@ -167,12 +169,28 @@ if __name__=="__main__":
         'lag': [0,1000]
     }
 
-    init_params = copy(true_params)
-    init_params.pop('lag')
-
     nchains     = 40
     nburn       = 200
     nsample     = 600
+    
+    init_params = copy(true_params)
+
+
+    from numpyro.contrib.nested_sampling import NestedSampler
+    NS = NestedSampler(model,
+                       constructor_kwargs={"num_live_points":50*4*(4+1), "max_samples":nchains*nburn*10})
+    NS.run(jax.random.PRNGKey(0),data )
+    out = NS.get_samples(jax.random.PRNGKey(0), nchains * nsample)
+
+    #------------------------------
+    c = ChainConsumer()
+    c.add_chain(out)
+    c.plotter.plot(truth=true_params, extents=extents)
+    plt.tight_layout()
+    plt.show()
+    #------------------------------
+
+
 
     #Create and run sampler
 
@@ -188,10 +206,9 @@ if __name__=="__main__":
         num_samples = nsample,
         )
 
-
-    sampler.run(jax.random.PRNGKey(1), data)
-
+    sampler.run(jax.random.PRNGKey(1), data, )
     out=sampler.get_samples()
+
     print("sampling done")
 
     #------------------------------
@@ -233,7 +250,7 @@ if __name__=="__main__":
 
     print('grid done, plotting')
 
-
+    #------------------------------
     plt.figure()
     plt.imshow(Z[::-1, ::],
                interpolation='none', cmap='viridis',
@@ -242,22 +259,24 @@ if __name__=="__main__":
     plt.axvline(true_params['lag'])
     plt.axhline(true_params['log_tau'])
     plt.title("log probability")
-    plt.xlabel("lag")
-    plt.ylabel("log_tau")
+    plt.xlabel("$ \Delta t$")
+    plt.ylabel("$ln | \\tau |$")
     plt.show()
 
     #------------------------------
-    plt.figure()
-    Z2 = np.log(np.exp(Z))
+    plt.figure(figsize=(4,4))
+    Z2 = Z - np.max(Z)
+    Z2 = np.clip(Z, a_max=1, a_min=-700)
     plt.imshow(Z2[::-1, ::],
                interpolation='none', cmap='viridis',
                extent=[min(lag_plot),max(lag_plot),min(logtau_plot),max(logtau_plot)],
                aspect="auto")
     plt.axvline(true_params['lag'])
     plt.axhline(true_params['log_tau'])
-    plt.title("log probability, filtered")
-    plt.xlabel("lag")
-    plt.ylabel("log_tau")
+    plt.title("Parameter Log Likelihood")
+    plt.xlabel("$ \Delta t$")
+    plt.ylabel("$ln | \\tau |$")
+    plt.tight_layout()
     plt.show()
 
     #------------------------------

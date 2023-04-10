@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import jax.numpy as jnp
 from copy import deepcopy as copy
+import re
 
 #===================================
 def _lc_mode_and_size(data):
@@ -236,6 +237,55 @@ def flatten_dict(dict):
 
     return(out,out_keys)
 
+def unflatten_dict(samples):
+    # ------
+    # Get names
+    names = []
+    keys = samples.keys()
+    for key in keys:
+        if bool(re.search(".*_[0-9]", key)): names.append(key[:-2])
+
+    counts = [names.count(name) for name in np.unique(names)]
+    names = np.unique(names)
+
+    out = {key: samples[key] for key in keys if not bool(re.search(".*_[0-9]", key))}
+
+    print(out)
+    print(names, counts)
+
+    # ------
+    # Assemble
+    for name, count in zip(names, counts):
+        N = len(samples[name + "_0"])
+        print(name, count, N)
+
+        to_add = {name: []}
+        for j in range(N):  # For each row
+            to_append = [0] * count
+            for i in range(count):  # Get the values from each name
+                to_append[i] = samples[name + "_" + str(i)][j]
+            to_append = jnp.array(to_append)
+            to_add[name].append(to_append)
+
+        out = out | to_add
+
+        out_sorted = {}
+        for key in sorted(out.keys()):
+            out_sorted = out_sorted | {key: jnp.array(out[key])}
+    return (out_sorted)
+
+
+#===================================
+def default_params(Nbands):
+
+    out ={"log_tau" : jnp.log(400),
+          "log_sigma_c": 0,
+          "lags":       jnp.zeros(Nbands-1),
+          "rel_amps":   jnp.ones(Nbands-1),
+          "means":      jnp.zeros(Nbands),
+    }
+
+    return(out)
 
 #===================================
 if __name__=="__main__":
@@ -249,7 +299,7 @@ if __name__=="__main__":
     line2 = array_to_lc(np.loadtxt("./Data/data_fake/clearsignal/line2.dat"))
 
     #Offset times by 100
-    cont["T"]+=100
+    cont["T"] +=100
     line1["T"]+=100
     line2["T"]+=100
 
@@ -269,6 +319,13 @@ if __name__=="__main__":
     data_tform(lcs_unbanded,    norm_param_unbanded)
     data_tform(lcs_banded,      norm_param_banded)
 
+    test = {"c_0": [0, 1, 2], "a_0": [0, 1, 2], "a_1": [0.1, 1.1, 2.1], "x": [0, 1, 2], "y": [0, 1, 2],
+            "b_0": [0, 1, 2],
+            "b_1": [0.1, 1.1, 2.1], "b_2": [0.2, 1.2, 2.2]}
+    unflatten_dict(test)
+
     print("Tests done")
+
+
 
     
