@@ -21,6 +21,7 @@ from numpyro import infer
 
 from tinygp import GaussianProcess, kernels, transforms
 import tinygp
+from config import *
 
 import data_utils
 from copy import deepcopy as copy
@@ -90,24 +91,25 @@ def build_gp(T, Y, diag, bands, tau, amps, means, basekernel = tinygp.kernels.qu
 # ============================================
 # Numpyro Side
 
-def cont_model(data):
+def model_cont(data):
     '''
     A jit friendly continuum only numpyro model
     '''
+
     data = copy(data)
     T, Y, E, bands = data['T'], data['Y'], data['E'], data['bands']
     # ----------------------------------
     # Numpyro Sampling
 
-    log_sigma_c = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(-2.5, 2.5))
-    log_tau     = numpyro.sample('log_tau', numpyro.distributions.Uniform(5, 7))
-    mean        = numpyro.sample('mean', numpyro.distributions.Uniform(-10, 10))
+    log_sigma_c = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(log_sigma_c_min, log_sigma_c_max))
+    log_tau     = numpyro.sample('log_tau', numpyro.distributions.Uniform(log_tau_min, log_tau_max))
+    means_0      = numpyro.sample('means_0', numpyro.distributions.Uniform(mean_min, mean_max))
 
     # ----------------------------------
     # Collect Params for tform
     tau     = jnp.exp(log_tau)
     amps    = jnp.array([jnp.exp(log_sigma_c)])
-    means   = jnp.array([jnp.exp(log_sigma_c)])
+    means   = jnp.array([means_0])
 
     gp_params  = {"tau:": tau,
                   "amps": amps,
@@ -122,7 +124,107 @@ def cont_model(data):
     numpyro.sample('y', gp.numpyro_dist(), obs=Y)
 
 
-def nline_model(data, Nbands=3):
+def model_1line(data):
+    data = copy(data)
+    T, Y, E, bands = data['T'], data['Y'], data['E'], data['bands']
+    # ----------------------------------
+    # Numpyro Sampling
+
+    # Continuum properties
+    log_sigma_c = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(log_sigma_c_min, log_sigma_c_max))
+    log_tau     = numpyro.sample('log_tau', numpyro.distributions.Uniform(log_tau_min, log_tau_max))
+    means_0      = numpyro.sample('means_0', numpyro.distributions.Uniform(mean_min, mean_max))
+    # Lag and scaling of respone lines
+
+    lags_1        = numpyro.sample('lags_1', numpyro.distributions.Uniform(lag_min, lag_max))
+    rel_amps_1    = numpyro.sample('rel_amps_1', numpyro.distributions.Uniform(rel_amp_min, rel_amp_max))
+    means_1        = numpyro.sample('means_1', numpyro.distributions.Uniform(mean_min, mean_max))
+
+    # ----------------------------------
+    # Collect params for sending to GP
+    tau  = jnp.exp(log_tau)
+    amps = jnp.array([1, rel_amps_1]) * jnp.exp(log_sigma_c)
+    lags = jnp.array([0, lags_1])
+    means= jnp.array([means_0, means_1])
+
+    gp_params  = {"tau:": tau,
+                  "lags": lags,
+                  "amps": amps,
+                  "means:": means}
+
+    # ----------------------------------
+    # Apply lags and sort data
+
+    T -= gp_params['lags'][bands]
+    inds = jnp.argsort(T)
+
+    T       =   T[inds]
+    Y       =   Y[inds]
+    E       =   E[inds]
+    bands   =   bands[inds]
+
+    # ----------------------------------
+    # Build and sample GP
+    # Build TinyGP Process
+    gp = build_gp(T=T, Y=Y, diag=E*E, bands=bands, tau=tau, amps=amps, means=means)
+
+    # Apply likelihood
+    numpyro.sample('y', gp.numpyro_dist(), obs=Y)
+
+def model_2line(data):
+    data = copy(data)
+    T, Y, E, bands = data['T'], data['Y'], data['E'], data['bands']
+    # ----------------------------------
+    # Numpyro Sampling
+
+    # Continuum properties
+    log_sigma_c = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(log_sigma_c_min, log_sigma_c_max))
+    log_tau     = numpyro.sample('log_tau', numpyro.distributions.Uniform(log_tau_min, log_tau_max))
+    means_0      = numpyro.sample('means_0', numpyro.distributions.Uniform(mean_min, mean_max))
+
+    # Lag and scaling of respone lines
+    lags_1        = numpyro.sample('lags_1', numpyro.distributions.Uniform(lag_min, lag_max))
+    rel_amps_1    = numpyro.sample('rel_amps_1', numpyro.distributions.Uniform(rel_amp_min, rel_amp_max))
+    means_1        = numpyro.sample('means_1', numpyro.distributions.Uniform(mean_min, mean_max))
+
+
+    lags_2        = numpyro.sample('lags_2', numpyro.distributions.Uniform(lag_min, lag_max))
+    rel_amps_2    = numpyro.sample('rel_amps_2', numpyro.distributions.Uniform(rel_amp_min, rel_amp_max))
+    means_2        = numpyro.sample('means_2', numpyro.distributions.Uniform(mean_min, mean_max))
+
+    # ----------------------------------
+    # Collect params for sending to GP
+    tau  = jnp.exp(log_tau)
+    amps = jnp.array([1, rel_amps_1, rel_amps_2]) * jnp.exp(log_sigma_c)
+    lags = jnp.array([0, lags_1, lags_2])
+    means= jnp.array([means_0, means_1  , means_2])
+
+    gp_params  = {"tau:": tau,
+                  "lags": lags,
+                  "amps": amps,
+                  "means:": means}
+
+    # ----------------------------------
+    # Apply lags and sort data
+
+    T -= gp_params['lags'][bands]
+    inds = jnp.argsort(T)
+
+    T       =   T[inds]
+    Y       =   Y[inds]
+    E       =   E[inds]
+    bands   =   bands[inds]
+
+    # ----------------------------------
+    # Build and sample GP
+    # Build TinyGP Process
+    gp = build_gp(T=T, Y=Y, diag=E*E, bands=bands, tau=tau, amps=amps, means=means)
+
+    # Apply likelihood
+    numpyro.sample('y', gp.numpyro_dist(), obs=Y)
+
+#-----------------------------------------------------------
+def model_nline(data, Nbands=3):
     '''
     General numpyro model for fitting n-sources
     '''
@@ -135,16 +237,16 @@ def nline_model(data, Nbands=3):
     # Numpyro Sampling
 
     # Continuum properties
-    log_sigma_c = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(-2.5, 2.5))
-    log_tau     = numpyro.sample('log_tau', numpyro.distributions.Uniform(5, 7))
+    log_sigma_c = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(log_sigma_c_min, log_sigma_c_max))
+    log_tau     = numpyro.sample('log_tau', numpyro.distributions.Uniform(log_tau_min, log_tau_max))
 
     # Lag and scaling of respone lines
 
-    lags        = numpyro.sample('lags', numpyro.distributions.Uniform(0, 500), sample_shape=(Nbands - 1,))
-    rel_amps    = numpyro.sample('rel_amps', numpyro.distributions.Uniform(0, 10), sample_shape=(Nbands - 1,))
+    lags        = numpyro.sample('lags', numpyro.distributions.Uniform(lag_min, lag_max), sample_shape=(Nbands - 1,))
+    rel_amps    = numpyro.sample('rel_amps', numpyro.distributions.Uniform(rel_amp_min, rel_amp_max), sample_shape=(Nbands - 1,))
 
     # Means
-    means       = numpyro.sample('means', numpyro.distributions.Uniform(-10, 10), sample_shape=(Nbands,))
+    means       = numpyro.sample('means', numpyro.distributions.Uniform(mean_min, mean_max), sample_shape=(Nbands,))
 
     # ----------------------------------
     # Collect params for sending to GP
@@ -205,9 +307,9 @@ if __name__=="__main__":
         #T, Y, diag, bands = data["T"], data["Y"], data["E"]*data["E"], data['bands']
         Nbands = np.max(data['bands'])+1
         if Nbands==1:
-            model = cont_model
+            model = model_cont
         else:
-            model = nline_model
+            model = model_nline
         i+=1
 
 

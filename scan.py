@@ -1,5 +1,14 @@
+'''
+scan.py
 
-from argparse import ArgumentParser
+Example of a gridsearch procedure
+
+HM 9/4
+'''
+
+#============================================
+import sys
+sys.path.append("..")
 import numpy as np
 
 from eval_and_opt import loss
@@ -10,16 +19,16 @@ import jax.numpy as jnp
 import matplotlib.pylab as plt
 from copy import deepcopy as copy
 
+#============================================
+
 if __name__=="__main__":
     print("Starting unit tests")
 
     # load some example data
-    rootfol = "./Data/data_fake/180day-bad/"
+    rootfol = "./Data/data_fake/150day-bad/"
 
-    truelag1=180
-    truelag2=180
-
-
+    truelag1=150
+    truelag2=150
 
     cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
     line1 = array_to_lc(np.loadtxt(rootfol + "line1.dat"))
@@ -30,9 +39,9 @@ if __name__=="__main__":
 
     gridloss = lambda x,y: loss(data, {"lags": jnp.array([x,y])})
 
-    nplot = 128
-    lag1 = np.linspace(0,500, nplot)
-    lag2 = np.linspace(0,500, nplot)
+    nplot = 256
+    lag1 = np.linspace(0,700, nplot)
+    lag2 = np.linspace(0,700, nplot)
 
     Z = np.zeros([nplot,nplot])
     for i in range(nplot):
@@ -45,6 +54,8 @@ if __name__=="__main__":
     Z=Z.T
     Z=Z[::-1,:]
 
+    #-----------------------------------
+    plt.figure(figsize=(4,4))
     plt.imshow(Z,
                interpolation='none', cmap='viridis',
                extent=[min(lag1),max(lag1),min(lag1),max(lag1)])
@@ -56,10 +67,13 @@ if __name__=="__main__":
     plt.tight_layout()
     plt.show()
 
-    Z2=Z - np.max(Z)
-    Z2=np.clip(Z2, a_min=-30,a_max = 0)
+    Z2 =Z - np.max(Z)
+    Z3 = copy(Z2)
 
-    plt.figure()
+    Z2 = np.clip(Z2,a_min=-30, a_max = 0)
+
+    #-----------------------------------
+    plt.figure(figsize=(4,4))
     plt.imshow(Z2,
                interpolation='none', cmap='viridis',
                extent=[min(lag1),max(lag1),min(lag1),max(lag1)])
@@ -68,5 +82,21 @@ if __name__=="__main__":
     plt.xlabel("$\Delta t_{1}$")
     plt.ylabel("$\Delta t_{2}$")
     plt.title("Log Probability, Filtered")
+    plt.tight_layout()
+    plt.show()
+
+    #-----------------------------------
+    contrast = 1
+    Z3 = np.exp(Z2)**(contrast)
+
+    plt.figure(figsize=(4,4))
+    plt.imshow(Z3,
+               interpolation='none', cmap='viridis',
+               extent=[min(lag1),max(lag1),min(lag1),max(lag1)])
+    plt.axvline(truelag1)
+    plt.axhline(truelag2)
+    plt.xlabel("$\Delta t_{1}$")
+    plt.ylabel("$\Delta t_{2}$")
+    plt.title("Likelihood")
     plt.tight_layout()
     plt.show()

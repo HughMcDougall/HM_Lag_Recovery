@@ -19,13 +19,17 @@ from modelling import build_gp
 from numpyro.infer.util import transform_fn
 from numpyro.contrib.nested_sampling import NestedSampler
 
+from modelling import model_1line, model_2line, model_cont
+
+from config import *
+
 
 #==================================================
 
 def nested_burnin_tformed(data, nchains, num_live_points = 0, max_samples = 0, seed = 0):
     Nbands = jnp.max(data['bands']) + 1
     samples = nested_burnin(data, nchains, num_live_points, max_samples, seed)
-    tformed_samples = nested_transform(samples,Nbands)
+    tformed_samples = nested_transform(samples)
     return(tformed_samples)
 
 
@@ -36,22 +40,24 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
     '''
     Nbands = jnp.max(data['bands']) + 1
 
-    num_modes = ((Nbands-1)*2)**2 + 1
-    num_dims  = Nbands*3
-
+    num_modes = ((Nbands-1)*2)*((Nbands-1)*2) + 1
+    num_dims  = 3*Nbands
     if num_live_points ==0:
-        num_live_points = 4*num_modes * (num_dims+1)
+        num_live_points = 50*num_modes
     if max_samples == 0:
-        max_samples = num_live_points * 4
+        max_samples = num_live_points * 100
+    print("num_live:\t%i\tmax_samples:\t%i" % (num_live_points, max_samples))
+
+    assert nchains <= max_samples, "Too many samples being drawn from nested sampler"
 
     #----
 
     if Nbands == 1:
-        model = _nested_model_cont
+        model = model_cont
     elif Nbands ==2:
-        model = _nested_model_1line
+        model = model_1line
     elif Nbands ==3:
-        model = _nested_model_2line
+        model = model_2line
     else:
         assert False, "nested burn in only current implemented for up to two lines"
 
@@ -63,234 +69,200 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
 
     return(samples)
 
-def nested_transform(samples, Nbands):
+def nested_transform(samples, to_nline = False):
     '''
     Transforms the samples from nested_burnin to the constrained domain. Returns as dictionary
     '''
+    Nbands = int(len(samples.keys())/3)
     #----
     if Nbands == 1:
         transforms = {
-            'log_sigma_c': numpyro.distributions.biject_to(numpyro.distributions.Uniform(-2.5, 2.5).support),
-            'log_tau': numpyro.distributions.biject_to(numpyro.distributions.Uniform(5, 7).support),
-            'means_0': numpyro.distributions.biject_to(numpyro.distributions.Uniform(-10, 10).support),
+            'log_sigma_c': numpyro.distributions.biject_to(numpyro.distributions.Uniform(log_sigma_c_min, log_sigma_c_max).support),
+            'log_tau': numpyro.distributions.biject_to(numpyro.distributions.Uniform(log_tau_min, log_tau_max).support),
+            'means_0': numpyro.distributions.biject_to(numpyro.distributions.Uniform(mean_min, mean_max).support),
         }
 
     elif Nbands ==2:
         transforms = {
-            'log_sigma_c': numpyro.distributions.biject_to(numpyro.distributions.Uniform(-2.5, 2.5).support),
-            'log_tau': numpyro.distributions.biject_to(numpyro.distributions.Uniform(5, 7).support),
-            'means_0': numpyro.distributions.biject_to(numpyro.distributions.Uniform(-10, 10).support),
+            'log_sigma_c': numpyro.distributions.biject_to(numpyro.distributions.Uniform(log_sigma_c_min, log_sigma_c_max).support),
+            'log_tau': numpyro.distributions.biject_to(numpyro.distributions.Uniform(log_tau_min, log_tau_max).support),
+            'means_0': numpyro.distributions.biject_to(numpyro.distributions.Uniform(mean_min, mean_max).support),
 
-            'lags_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(0, 500).support),
-            'rel_amps_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(0, 10).support),
-            'means_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(-10, 10).support),
+            'lags_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(lag_min, lag_max).support),
+            'rel_amps_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(rel_amp_min, rel_amp_max).support),
+            'means_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(mean_min, mean_max).support),
         }
     elif Nbands ==3:
         transforms = {
-            'log_sigma_c': numpyro.distributions.biject_to(numpyro.distributions.Uniform(-2.5, 2.5).support),
-            'log_tau': numpyro.distributions.biject_to(numpyro.distributions.Uniform(5, 7).support),
-            'means_0': numpyro.distributions.biject_to(numpyro.distributions.Uniform(-10, 10).support),
+            'log_sigma_c': numpyro.distributions.biject_to(numpyro.distributions.Uniform(log_sigma_c_min, log_sigma_c_max).support),
+            'log_tau': numpyro.distributions.biject_to(numpyro.distributions.Uniform(log_tau_min, log_tau_max).support),
+            'means_0': numpyro.distributions.biject_to(numpyro.distributions.Uniform(mean_min, mean_max).support),
 
-            'lags_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(0, 500).support),
-            'rel_amps_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(0, 10).support),
-            'means_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(-10, 10).support),
+            'lags_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(lag_min, lag_max).support),
+            'rel_amps_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(rel_amp_min, rel_amp_max).support),
+            'means_1': numpyro.distributions.biject_to(numpyro.distributions.Uniform(mean_min, mean_max).support),
 
-            'lags_2': numpyro.distributions.biject_to(numpyro.distributions.Uniform(0, 500).support),
-            'rel_amps_2': numpyro.distributions.biject_to(numpyro.distributions.Uniform(0, 10).support),
-            'means_2': numpyro.distributions.biject_to(numpyro.distributions.Uniform(-10, 10).support),
+            'lags_2': numpyro.distributions.biject_to(numpyro.distributions.Uniform(lag_min, lag_max).support),
+            'rel_amps_2': numpyro.distributions.biject_to(numpyro.distributions.Uniform(rel_amp_min, rel_amp_max).support),
+            'means_2': numpyro.distributions.biject_to(numpyro.distributions.Uniform(mean_min, mean_max).support),
         }
     else:
         assert False, "nested burn in only current implemented for up to two lines"
+
+    for key in transforms.keys():
+        assert key in samples.keys(), "bad key: %s\t in nested_transform" %key
+    for key in samples.keys():
+        assert key in transforms.keys(), "bad key: %s\t in nested_transform" %key
 
     #--------
     #Transform samples to constrained domain
     start_positions = transform_fn(transforms, samples, invert=True)
     # --------
-    # Assemble starting positions into correct format
-    if Nbands == 1:
-        out = samples
 
-    elif Nbands ==2:
-        out = {"log_tau": samples["log_tau"],
-               "log_sigma_c": samples["log_sigma_c"],
-               "lags": jnp.array([samples["lags_1"]]).T,
-               "rel_amps": jnp.array([samples["rel_amps_1"]]).T,
-               "means": jnp.array([samples["means_0"],samples["means_1"]]).T
-               }
-    elif Nbands ==3:
-        out = {"log_tau": samples["log_tau"],
-               "log_sigma_c": samples["log_sigma_c"],
-               "lags": jnp.array([samples["lags_1"],samples["lags_2"]]).T,
-               "rel_amps": jnp.array([samples["rel_amps_1"],samples["rel_amps_2"]]).T,
-               "means": jnp.array([samples["means_0"],samples["means_1"], samples["means_2"]]).T
-               }
+    if to_nline == False:
+        return start_positions
+    else:
+        # Assemble starting positions into correct format
+        if Nbands == 1:
+            out = samples
 
-    return(out)
+        elif Nbands ==2:
+            out = {"log_tau": samples["log_tau"],
+                   "log_sigma_c": samples["log_sigma_c"],
+                   "lags": jnp.array([samples["lags_1"]]).T,
+                   "rel_amps": jnp.array([samples["rel_amps_1"]]).T,
+                   "means": jnp.array([samples["means_0"],samples["means_1"]]).T
+                   }
+        elif Nbands ==3:
+            out = {"log_tau": samples["log_tau"],
+                   "log_sigma_c": samples["log_sigma_c"],
+                   "lags": jnp.array([samples["lags_1"],samples["lags_2"]]).T,
+                   "rel_amps": jnp.array([samples["rel_amps_1"],samples["rel_amps_2"]]).T,
+                   "means": jnp.array([samples["means_0"],samples["means_1"], samples["means_2"]]).T
+                   }
+
+        return(out)
 
 
 #==================================================
-
-
-def _nested_model_cont(data):
-    '''
-    A jit friendly continuum only numpyro model
-    '''
-
-    data = copy(data)
-    T, Y, E, bands = data['T'], data['Y'], data['E'], data['bands']
-    # ----------------------------------
-    # Numpyro Sampling
-
-    log_sigma_c = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(-2.5, 2.5))
-    log_tau     = numpyro.sample('log_tau', numpyro.distributions.Uniform(5, 7))
-    mean        = numpyro.sample('mean', numpyro.distributions.Uniform(-10, 10))
-
-    # ----------------------------------
-    # Collect Params for tform
-    tau     = jnp.exp(log_tau)
-    amps    = jnp.array([jnp.exp(log_sigma_c)])
-    means   = jnp.array([jnp.exp(log_sigma_c)])
-
-    gp_params  = {"tau:": tau,
-                  "amps": amps,
-                  "means:": means}
-
-    # ----------------------------------
-    # Build and sample GP
-    # Build TinyGP Process
-    gp = build_gp(T=T, Y=Y, diag=E*E, bands=bands, tau=tau, amps=amps, means=means)
-
-    # Apply likelihood
-    numpyro.sample('y', gp.numpyro_dist(), obs=Y)
-
-
-def _nested_model_1line(data):
-    data = copy(data)
-    T, Y, E, bands = data['T'], data['Y'], data['E'], data['bands']
-    # ----------------------------------
-    # Numpyro Sampling
-
-    # Continuum properties
-    log_sigma_c = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(-2.5, 2.5))
-    log_tau     = numpyro.sample('log_tau', numpyro.distributions.Uniform(5, 7))
-    mean_c        = numpyro.sample('means_0', numpyro.distributions.Uniform(-10, 10))
-    # Lag and scaling of respone lines
-
-    lags_1        = numpyro.sample('lags_1', numpyro.distributions.Uniform(0, 500))
-    rel_amps_1    = numpyro.sample('rel_amps_1', numpyro.distributions.Uniform(0, 10))
-    mean_1        = numpyro.sample('means_1', numpyro.distributions.Uniform(-10, 10))
-
-    # ----------------------------------
-    # Collect params for sending to GP
-    tau  = jnp.exp(log_tau)
-    amps = jnp.array([1, rel_amps_1]) * jnp.exp(log_sigma_c)
-    lags = jnp.array([0, lags_1])
-    means= jnp.array([mean_c, mean_1])
-
-    gp_params  = {"tau:": tau,
-                  "lags": lags,
-                  "amps": amps,
-                  "means:": means}
-
-    # ----------------------------------
-    # Apply lags and sort data
-
-    T -= gp_params['lags'][bands]
-    inds = jnp.argsort(T)
-
-    T       =   T[inds]
-    Y       =   Y[inds]
-    E       =   E[inds]
-    bands   =   bands[inds]
-
-    # ----------------------------------
-    # Build and sample GP
-    # Build TinyGP Process
-    gp = build_gp(T=T, Y=Y, diag=E*E, bands=bands, tau=tau, amps=amps, means=means)
-
-    # Apply likelihood
-    numpyro.sample('y', gp.numpyro_dist(), obs=Y)
-
-def _nested_model_2line(data):
-    data = copy(data)
-    T, Y, E, bands = data['T'], data['Y'], data['E'], data['bands']
-    # ----------------------------------
-    # Numpyro Sampling
-
-    # Continuum properties
-    log_sigma_c = numpyro.sample('log_sigma_c', numpyro.distributions.Uniform(-2.5, 2.5))
-    log_tau     = numpyro.sample('log_tau', numpyro.distributions.Uniform(5, 7))
-    mean_c        = numpyro.sample('means_0', numpyro.distributions.Uniform(-10, 10))
-
-    # Lag and scaling of respone lines
-
-    lags_1        = numpyro.sample('lags_1', numpyro.distributions.Uniform(0, 500))
-    rel_amps_1    = numpyro.sample('rel_amps_1', numpyro.distributions.Uniform(0, 10))
-    mean_1        = numpyro.sample('means_1', numpyro.distributions.Uniform(-10, 10))
-
-    lags_2        = numpyro.sample('lags_2', numpyro.distributions.Uniform(0, 500))
-    rel_amps_2    = numpyro.sample('rel_amps_2', numpyro.distributions.Uniform(0, 10))
-    mean_2        = numpyro.sample('means_2', numpyro.distributions.Uniform(-10, 10))
-
-    # ----------------------------------
-    # Collect params for sending to GP
-    tau  = jnp.exp(log_tau)
-    amps = jnp.array([1, rel_amps_1, rel_amps_2]) * jnp.exp(log_sigma_c)
-    lags = jnp.array([0, lags_1, lags_2])
-    means= jnp.array([mean_c, mean_1  , mean_2])
-
-    gp_params  = {"tau:": tau,
-                  "lags": lags,
-                  "amps": amps,
-                  "means:": means}
-
-    # ----------------------------------
-    # Apply lags and sort data
-
-    T -= gp_params['lags'][bands]
-    inds = jnp.argsort(T)
-
-    T       =   T[inds]
-    Y       =   Y[inds]
-    E       =   E[inds]
-    bands   =   bands[inds]
-
-    # ----------------------------------
-    # Build and sample GP
-    # Build TinyGP Process
-    gp = build_gp(T=T, Y=Y, diag=E*E, bands=bands, tau=tau, amps=amps, means=means)
-
-    # Apply likelihood
-    numpyro.sample('y', gp.numpyro_dist(), obs=Y)
-
 if __name__=="__main__":
     from data_utils import array_to_lc, lc_to_banded, data_tform, normalize_tform, flatten_dict
 
     print("Starting tests for fitting procedure")
 
+    extents = {
+               "log_sigma_c":[log_sigma_c_min, log_sigma_c_max],
+               "log_tau": [log_tau_min,log_tau_max],
+               "lags_1":[0,lag_max],
+               "lags_2": [0, lag_max],
+               "rel_amps_1": [0,rel_amp_max],
+               "rel_amps_2": [0, rel_amp_max],
+               "means_0": [mean_min, mean_max],
+               "means_1": [mean_min, mean_max],
+               "means_2": [mean_min, mean_max],
+               }
+
     # load some example data
-    cont  = array_to_lc(np.loadtxt("./Data/data_fake/360day/cont.dat"))
-    line1 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line1.dat"))
-    line2 = array_to_lc(np.loadtxt("./Data/data_fake/360day/line2.dat"))
+    rootfol = "./Data/data_fake/150day-bad/"
+
+    truelag1=150
+    truelag2=150
+
+    cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
+    line1 = array_to_lc(np.loadtxt(rootfol + "line1.dat"))
+    line2 = array_to_lc(np.loadtxt(rootfol + "line2.dat"))
 
     #Make into banded format
     banded_2line  = lc_to_banded([cont, line1, line2])
     banded_1line  = lc_to_banded([cont, line1])
     banded_cont   = lc_to_banded([cont])
 
-    for data,model in zip([banded_cont, banded_1line, banded_2line],
-                          [_nested_model_cont, _nested_model_1line, _nested_model_2line]):
-        print("Unit tests for %i lines: " %max(data["bands"]) )
-        nest_results = nested_burnin(data, 300, num_live_points=1000, max_samples=2000)
-        nest_results_tformed = nested_transform(nest_results, np.max(data['bands'])+1)
+    datas = [banded_cont, banded_1line,banded_2line]
+    models = [model_cont, model_1line, model_2line]
 
+    '''
+    for i in [2,1,0]:
+        data = datas[i]
+        print("\t Unit tests for %i lines: " %max(data["bands"]) )
+        nested_burnin_tformed(data, nchains=10, num_live_points=10, max_samples=20)
+
+    print("Unit tests succesfful")
+    '''
+
+    #==================================================================
     from chainconsumer import ChainConsumer
     import matplotlib.pylab as plt
+
+    #---------------------------------------------
+    for i in [2]:
+        data = datas[i]
+        nbands = max(data["bands"])+1
+        nmodes = 1 + (nbands-1)**2
+        nsamples = 100 * 25 * nmodes
+        nsamples = 15
+
+        nest_results = nested_burnin(data, nchains=nsamples)
+
+    #---------------------------------------------
+    to_nline = False
+    if to_nline:
+        from modelling import model_nline
+        model = model_nline
+    else:
+        model = models[i]
+    #---------------------------------------------
+
+    print("Doing transforms")
+    nest_starts = nested_transform(nest_results, to_nline=to_nline)
+    print("UNTRANSFORMED RESULTS")
+    for key in nest_results.keys():
+        print(key)
+        print(nest_results[key])
+
+    print("TRANSFORMED RESULTS")
+    for key in nest_starts.keys():
+        print(key)
+        print(nest_starts[key])
+    print("Making NUTS sampler")
+
+    #---------------------------------------------
+
+    sampler = numpyro.infer.MCMC(
+        numpyro.infer.NUTS(model = model, step_size=0.001, target_accept_prob=0.9),
+        num_warmup= 200,
+        num_chains=nsamples,
+        num_samples= 200,
+    )
+
+    print("Running sampler")
+    sampler.run(jax.random.PRNGKey(0), data, init_params=nest_starts)
+    print("Getting samples and plotting")
+    NUTS_samples = sampler.get_samples()
+
+    #---------------------------------------------
+
     c= ChainConsumer()
-    print(nest_results)
     c.add_chain(nest_results)
-    c.plotter.plot()
+    c.plotter.plot(extents=extents)
+    plt.tight_layout()
+    plt.title("Nested Sampling Results")
     plt.show()
 
+    c2= ChainConsumer()
+    if to_nline:
+        NUTS_samples = dict(NUTS_samples)
+        print(NUTS_samples)
+        NUTS_samples,keys= flatten_dict(NUTS_samples)
+        print(NUTS_samples)
+        c2.add_chain(NUTS_samples , parameters=keys)
+    else:
+        c2.add_chain(NUTS_samples)
 
-    print("unit tests succesfful")
+    for key in NUTS_samples.keys():
+        print(key)
+        print(NUTS_samples[key])
+
+    c2.plotter.plot(extents=extents)
+    plt.tight_layout()
+    plt.title("Nested Sampling Results")
+    plt.show()
