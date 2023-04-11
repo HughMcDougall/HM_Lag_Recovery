@@ -102,7 +102,7 @@ def main():
 
     # Actually run
     SIMBA.start(args.i, table_url = args.table, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
-    output, nest_seeds, nest_full = fit_single_source(banded_data, MCMC_params=MCMC_params, return_nested=True) #Main MCMC run
+    output, nest_seeds, nest_full = fit_single_source(banded_data, MCMC_params=MCMC_params, return_nested_full = True, return_nested_seeds=True) #Main MCMC run
     SIMBA.finish(args.i, table_url = args.table, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
 
     # Outputs
