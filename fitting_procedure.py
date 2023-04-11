@@ -68,9 +68,12 @@ def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested_ful
     else:
         raise TypeError("Cannot have more than 2 lines in current fit_procedure()")
 
+    nmodes = (2**(Nbands-1) + 1)
     if Nchain == 0:
-        nmodes = (2**(Nbands-1) + 1)
-        Nchain = int(nmodes*20 / (0.25)**2 )
+        if Nband >0:
+            Nchain = int(nmodes*4 / (0.25)**2 )
+        else:
+            Nchain = 100
 
     # =======================
     # Use nested sampling for initial pass
@@ -78,7 +81,7 @@ def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested_ful
     print("Acquiring modes with nested sampling with %i live points" %num_live)
 
     if return_nested_full:
-        nest_seeds, nest_full       = nested_burnin(banded_data, nchains= [Nchain, Nchain*Nsample], num_live_points=num_live, max_samples=max_samples)
+        nest_seeds, nest_full       = nested_burnin(banded_data, nchains= [Nchain, 200*nmodes], num_live_points=num_live, max_samples=max_samples)
     else:
         nest_seeds                  = nested_burnin(banded_data, nchains= Nchain, num_live_points=num_live, max_samples=max_samples)
 
