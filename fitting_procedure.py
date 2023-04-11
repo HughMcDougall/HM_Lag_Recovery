@@ -28,7 +28,7 @@ from nested_burnin import nested_burnin, nested_transform
 
 #============================================
 
-def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested = False):
+def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested_full = False, return_nested_seeds=False):
     '''
     #[MISSINGNO] - Documentation
     '''
@@ -77,8 +77,12 @@ def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested = F
 
     print("Acquiring modes with nested sampling with %i live points" %num_live)
 
-    nest_results    = nested_burnin(banded_data, nchains= Nchain, num_live_points=num_live, max_samples=max_samples)
-    start_positions = nested_transform(nest_results) # Transformation required for passing to sampler.run()
+    if return_nested_full:
+        nest_seeds, nest_full       = nested_burnin(banded_data, nchains= [Nchain, Nchain*Nsample], num_live_points=num_live, max_samples=max_samples)
+    else:
+        nest_seeds                  = nested_burnin(banded_data, nchains= Nchain, num_live_points=num_live, max_samples=max_samples)
+
+    start_positions = nested_transform(nest_seeds) # Transformation required for passing to sampler.run()
 
     # =======================
     # Use NUTS HMC to refine contours
@@ -99,11 +103,15 @@ def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested = F
     # Return results
 
     NUTS_output = dict(sampler.get_samples())
-    if not return_nested:
-        return(NUTS_output)
-    else:
-        NEST_output = dict(nest_results)
-        return(NUTS_output, NEST_output)
+
+    if not return_nested_full and not return_nested_seeds: return(NUTS_output)
+
+    out = [NUTS_output]
+    if return_nested_seeds:
+        out.append(dict(nest_seeds))
+    if return_nested_full:
+        out.append(dict(nest_full))
+    return(out)
 
 
 #=================================================================

@@ -102,21 +102,24 @@ def main():
 
     # Actually run
     SIMBA.start(args.i, table_url = args.table, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
-    output, nest_output = fit_single_source(banded_data, MCMC_params=MCMC_params, return_nested=True) #Main MCMC run
+    output, nest_seeds, nest_full = fit_single_source(banded_data, MCMC_params=MCMC_params, return_nested=True) #Main MCMC run
     SIMBA.finish(args.i, table_url = args.table, comment = "Job done /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
 
     # Outputs
     print("Job finished. Saving to %s" %(job_args["out_url"]+"outchain.dat") )
     out, out_keys = flatten_dict(output)
-    out_nest, out_nest_keys = flatten_dict(nest_output)
+    out_nest_seed, out_nest_keys = flatten_dict(nest_seeds)
+    out_nest_full, out_nest_keys = flatten_dict(nest_seeds)
     try:
         np.savetxt(job_args["out_url"]+"outchain.dat",out)
-        np.savetxt(job_args["out_url"]+"outchain-nest.dat",out_nest)
+        np.savetxt(job_args["out_url"]+"outchain-nest-seed.dat",out_nest_seed)
+        np.savetxt(job_args["out_url"]+"outchain-nest-full.dat",out_nest_full)
         np.savetxt(job_args["out_url"]+"outchain_keys.dat",out_keys,fmt="%s")
     except:
         print("Unable to locate output folder %s. Saving to local runtime folder instead" %job_args["out_url"])
         np.savetxt("./outchain.dat",out)
-        np.savetxt("./outchain-nest.dat",out_nest)
+        np.savetxt("./outchain-nest-seed.dat",out_nest_seed)
+        np.savetxt("./outchain-nest-full.dat",out_nest_full)
         np.savetxt("./outchain_keys.dat",out_keys,fmt="%s")
 
 if __name__=="__main__":

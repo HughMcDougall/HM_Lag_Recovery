@@ -65,9 +65,13 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
                                                   "max_samples": max_samples})
     ns.run(jax.random.PRNGKey(seed), data)
 
-    samples = ns.get_samples(jax.random.PRNGKey(seed), nchains)
-
-    return(samples)
+    if type(nchains) == int:
+        samples = ns.get_samples(jax.random.PRNGKey(seed), nchains)
+        return(samples)
+    else:
+        samples = []
+        for num_samples in nchains:
+            samples.append(ns.get_samples(jax.random.PRNGKey(seed), num_samples))
 
 def nested_transform(samples, to_nline = False):
     '''
