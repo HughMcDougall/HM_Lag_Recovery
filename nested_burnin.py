@@ -77,6 +77,7 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
             else:
                 raise Warning("Tried to pull bad number of nested samples %i from %i max evals" %(num_samples, max_samples))
                 samples.append(ns.get_samples(jax.random.PRNGKey(seed), 1))
+        return(samples)
 
 def nested_transform(samples, to_nline = False):
     '''
