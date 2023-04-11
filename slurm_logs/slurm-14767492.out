@@ -1,0 +1,19 @@
+INFO[2023-04-11 23:09:25,354]: Unable to initialize backend 'cuda': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-11 23:09:25,354]: Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-11 23:09:25,355]: Unable to initialize backend 'tpu': INVALID_ARGUMENT: TpuPlatform is not available.
+INFO[2023-04-11 23:09:25,355]: Unable to initialize backend 'plugin': xla_extension has no attributes named get_plugin_device_client. Compile TensorFlow with //tensorflow/compiler/xla/python:enable_plugin_device set to true (defaults to false) to enable this.
+WARNING[2023-04-11 23:09:25,355]: No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+SIMBA SAFETY LOAD DEBUG:	 get_args
+4 i
+good login of ./SIMBA_jobstatus.dat in get_args
+Beginning job 4 on job list SIMBAtest_status.dat with mode twoline
+Data loaded. Saving normalized lightcurve to ./Data/data_fake/150day-good/banded_data.dat
+SIMBA SAFETY LOAD DEBUG:	 start
+4 i
+good login of ./SIMBA_jobstatus.dat in start
+Traceback (most recent call last):
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 126, in <module>
+    main()
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 105, in main
+    output, nest_seeds, nest_full = fit_single_source(banded_data, MCMC_params=MCMC_params, return_nested=True) #Main MCMC run
+TypeError: fit_single_source() got an unexpected keyword argument 'return_nested'
