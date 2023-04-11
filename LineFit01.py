@@ -68,7 +68,7 @@ def main():
     elif mode == "line2": lcs_unbanded = [cont, line2]
     elif mode == "cont": lcs_unbanded = [cont]
 
-    print("Beginning job %i on job list %s with mode %s)" % (args.i, args.table, mode))
+    print("Beginning job %i on job list %s with mode %s" % (args.i, args.table, mode))
 
     # Convert to banded and normalize
     banded_data = lc_to_banded(lcs_unbanded)

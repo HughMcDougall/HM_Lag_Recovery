@@ -13,7 +13,7 @@ lag_min = 0.0
 lag_max = 800
 
 log_tau_min = 3.0
-log_tau_max = 10.0
+log_tau_max = 15.0
 
 log_sigma_c_min = -2.5
 log_sigma_c_max = 2.5
@@ -21,8 +21,8 @@ log_sigma_c_max = 2.5
 rel_amp_min =0.0
 rel_amp_max =10.0
 
-mean_min = -10.0
-mean_max = 10.0
+mean_min = -20.0
+mean_max = 20.0
 
 #----------------------------------
 # Default extents
