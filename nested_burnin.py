@@ -48,7 +48,8 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
         max_samples = num_live_points * 100
     print("In nested_burnin:\t num_live:\t%i\tmax_samples:\t%i" % (num_live_points, max_samples))
 
-    assert nchains <= max_samples, "Too many samples being drawn from nested sampler"
+    if type(nchains)==int:
+        assert nchains <= max_samples, "Too many samples being drawn from nested sampler"
 
     #----
 
@@ -71,7 +72,11 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
     else:
         samples = []
         for num_samples in nchains:
-            samples.append(ns.get_samples(jax.random.PRNGKey(seed), num_samples))
+            if num_samples < max_samples:
+                samples.append(ns.get_samples(jax.random.PRNGKey(seed), num_samples))
+            else:
+                raise Warning("Tried to pull bad number of nested samples %i from %i max evals" %(num_samples, max_samples))
+                samples.append(ns.get_samples(jax.random.PRNGKey(seed), 1))
 
 def nested_transform(samples, to_nline = False):
     '''
