@@ -70,7 +70,7 @@ def fit_single_source(banded_data, MCMC_params=None, seed = 0, return_nested_ful
 
     nmodes = (2**(Nbands-1) + 1)
     if Nchain == 0:
-        if Nband >0:
+        if Nbands >0:
             Nchain = int(nmodes*4 / (0.25)**2 )
         else:
             Nchain = 100

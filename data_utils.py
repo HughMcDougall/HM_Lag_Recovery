@@ -279,7 +279,7 @@ def unflatten_dict(samples):
 def default_params(Nbands):
 
     out ={"log_tau" : jnp.log(400),
-          "log_sigma_c": 0,
+          "log_sigma_c": 0.0,
           "lags":       jnp.zeros(Nbands-1),
           "rel_amps":   jnp.ones(Nbands-1),
           "means":      jnp.zeros(Nbands),

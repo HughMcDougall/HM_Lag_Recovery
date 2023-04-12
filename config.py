@@ -13,7 +13,7 @@ lag_min = 0.0
 lag_max = 800
 
 log_tau_min = 3.0
-log_tau_max = 15.0
+log_tau_max = 8.0
 
 log_sigma_c_min = -2.5
 log_sigma_c_max = 2.5
@@ -37,6 +37,20 @@ plot_extents = {
     "means_0": [mean_min, mean_max],
     "means_1": [mean_min, mean_max],
     "means_2": [mean_min, mean_max],
+}
+
+#----------------------------------
+# 'decent fit paramaters'
+start_params = {
+    "log_sigma_c": 0,
+    "log_tau": 6,
+    "lags_1": 0,
+    "lags_2": 0,
+    "rel_amps_1": 1,
+    "rel_amps_2": 1,
+    "means_0": 0,
+    "means_1": 0,
+    "means_2": 0,
 }
 
 #----------------------------------

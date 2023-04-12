@@ -8,12 +8,14 @@ SIGNAL = np.loadtxt("banded_data.dat")
 #==================================
 
 DATA = np.loadtxt("outchain.dat")
-NEST = np.loadtxt("outchain-nest.dat")
+NEST_SEED = np.loadtxt("outchain-nest-seed.dat")
+NEST_FULL = np.loadtxt("outchain-nest-full.dat")
 KEYS = np.loadtxt("outchain_keys.dat", dtype="str_")
 
 c = ChainConsumer()
-c.add_chain(DATA, parameters = list(KEYS))
-c.add_chain(NEST, parameters = list(KEYS))
+c.add_chain(DATA, parameters = list(KEYS), name = "HMC")
+c.add_chain(NEST_SEED, parameters = list(KEYS), name = "Nest Seeds")
+c.add_chain(NEST_FULL, parameters = list(KEYS), name = "Nest Full")
 
 truth = {"rel_amps_0" : 1,
          "rel_amps_1" : 1,

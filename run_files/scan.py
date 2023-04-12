@@ -18,14 +18,14 @@ import jax.numpy as jnp
 
 import matplotlib.pylab as plt
 from copy import deepcopy as copy
-
+import config
 #============================================
 
 if __name__=="__main__":
     print("Starting unit tests")
 
     # load some example data
-    rootfol = "./Data/data_fake/150day-bad/"
+    rootfol = "../Data/data_fake/150day-bad/"
 
     truelag1=150
     truelag2=150
@@ -35,20 +35,33 @@ if __name__=="__main__":
     line2 = array_to_lc(np.loadtxt(rootfol + "line2.dat"))
 
     #Make into banded format
-    data  = lc_to_banded([cont, line1, line2])
+    data  = lc_to_banded([cont, line1])
+
 
     gridloss = lambda x,y: loss(data, {"lags": jnp.array([x,y])})
+    gridloss = lambda x,y: loss(data, {"lags": jnp.array([x,160]), "log_tau": y})
 
-    nplot = 256
-    lag1 = np.linspace(0,700, nplot)
-    lag2 = np.linspace(0,700, nplot)
+    nplot = 128
+    lag1 = np.linspace(0,config.lag_max, nplot)
+    lag2 = np.linspace(0,config.lag_max, nplot)
+    log_taus = np.linspace(config.log_tau_min, config.log_tau_max, nplot)
+
+    X = lag1
+    Y = log_taus
+
+    true_x = 150
+    true_y = 6
+
+    xlabel = "$\Delta t_{1}$"
+    ylabel = "$\Delta t_{2}$"
+    ylabel = "$\ ln| \\tau |$"
 
     Z = np.zeros([nplot,nplot])
     for i in range(nplot):
         if i%50==0: print(i)
         for j in range(nplot):
-            x= lag1[i]
-            y= lag2[j]
+            x= X[i]
+            y= Y[j]
 
             Z[i,j] = gridloss(x,y)
     Z=Z.T
@@ -58,11 +71,12 @@ if __name__=="__main__":
     plt.figure(figsize=(4,4))
     plt.imshow(Z,
                interpolation='none', cmap='viridis',
-               extent=[min(lag1),max(lag1),min(lag1),max(lag1)])
-    plt.axvline(truelag1)
-    plt.axhline(truelag2)
-    plt.xlabel("$\Delta t_{1}$")
-    plt.ylabel("$\Delta t_{2}$")
+               extent=[min(X),max(X),min(Y),max(Y)],
+               aspect="auto")
+    plt.axvline(true_x)
+    plt.axhline(true_y)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.title("Log Probability")
     plt.tight_layout()
     plt.show()
@@ -76,27 +90,29 @@ if __name__=="__main__":
     plt.figure(figsize=(4,4))
     plt.imshow(Z2,
                interpolation='none', cmap='viridis',
-               extent=[min(lag1),max(lag1),min(lag1),max(lag1)])
-    plt.axvline(truelag1)
-    plt.axhline(truelag2)
-    plt.xlabel("$\Delta t_{1}$")
-    plt.ylabel("$\Delta t_{2}$")
+               extent=[min(X),max(X),min(Y),max(Y)],
+               aspect="auto")
+    plt.axvline(true_x)
+    plt.axhline(true_y)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.title("Log Probability, Filtered")
     plt.tight_layout()
     plt.show()
 
     #-----------------------------------
-    contrast = 1
-    Z3 = np.exp(Z2)**(contrast)
+    contrast = 1/2
+    Z3 = np.exp(Z3*contrast)
 
     plt.figure(figsize=(4,4))
     plt.imshow(Z3,
                interpolation='none', cmap='viridis',
-               extent=[min(lag1),max(lag1),min(lag1),max(lag1)])
-    plt.axvline(truelag1)
-    plt.axhline(truelag2)
-    plt.xlabel("$\Delta t_{1}$")
-    plt.ylabel("$\Delta t_{2}$")
+               extent=[min(X),max(X),min(Y),max(Y)],
+               aspect="auto")
+    plt.axvline(true_x)
+    plt.axhline(true_y)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.title("Likelihood")
     plt.tight_layout()
     plt.show()

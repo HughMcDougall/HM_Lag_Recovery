@@ -108,8 +108,8 @@ def main():
     # Outputs
     print("Job finished. Saving to %s" %(job_args["out_url"]+"outchain.dat") )
     out, out_keys = flatten_dict(output)
-    out_nest_seed, out_nest_keys = flatten_dict(nest_seeds)
-    out_nest_full, out_nest_keys = flatten_dict(nest_seeds)
+    out_nest_seed, out_nest_keys_seed = flatten_dict(nest_seeds)
+    out_nest_full, out_nest_keys_full = flatten_dict(nest_full)
     try:
         np.savetxt(job_args["out_url"]+"outchain.dat",out)
         np.savetxt(job_args["out_url"]+"outchain-nest-seed.dat",out_nest_seed)

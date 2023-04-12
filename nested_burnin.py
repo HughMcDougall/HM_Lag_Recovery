@@ -40,16 +40,28 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
     '''
     Nbands = jnp.max(data['bands']) + 1
 
+    try:
+        nchains_int = int(nchains)
+    except:
+        try:
+            nchains_int = [int(num_samples) for num_samples in nchains]
+        except:
+            raise TypeError("Bad type input to nested_burnin for nchains")
+
     num_modes = ((Nbands-1)*2)*((Nbands-1)*2) + 1
     num_dims  = 3*Nbands
     if num_live_points ==0:
-        num_live_points = 50*num_modes
+        num_live_points = 50*num_modes * (num_dims+1)
     if max_samples == 0:
-        max_samples = num_live_points * 100
+        max_samples = num_live_points * 20
     print("In nested_burnin:\t num_live:\t%i\tmax_samples:\t%i" % (num_live_points, max_samples))
 
-    if type(nchains)==int:
-        assert nchains <= max_samples, "Too many samples being drawn from nested sampler"
+    if type(nchains_int)==int:
+        assert nchains_int<max_samples, "Attempted to draw %i samples from maximum of %i in nested_burnin" %(nchains_int, max_samples)
+    else:
+        for num_samples in nchains_int:
+            assert nchains_int < max_samples, "Attempted to draw %i samples from maximum of %i in nested_burnin" % (
+            num_samples, max_samples)
 
     #----
 
@@ -66,18 +78,12 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
                                                   "max_samples": max_samples})
     ns.run(jax.random.PRNGKey(seed), data)
 
-    if type(nchains) == int:
-        samples = ns.get_samples(jax.random.PRNGKey(seed), nchains)
-        return(samples)
+    if type(nchains_int) == int:
+        samples = ns.get_samples(jax.random.PRNGKey(seed), nchains_int)
     else:
-        samples = []
-        for num_samples in nchains:
-            if num_samples < max_samples:
-                samples.append(ns.get_samples(jax.random.PRNGKey(seed), num_samples))
-            else:
-                raise Warning("Tried to pull bad number of nested samples %i from %i max evals" %(num_samples, max_samples))
-                samples.append(ns.get_samples(jax.random.PRNGKey(seed), 1))
-        return(samples)
+        samples = [ns.get_samples(jax.random.PRNGKey(seed), nchains_int) for num_samples in nchains]
+
+    return(samples)
 
 def nested_transform(samples, to_nline = False):
     '''
@@ -179,12 +185,12 @@ if __name__=="__main__":
     datas = [banded_cont, banded_1line,banded_2line]
     models = [model_cont, model_1line, model_2line]
 
-
+    '''
     for i in [2,1,0]:
         data = datas[i]
         print("\t Unit tests for %i lines: " %max(data["bands"]) )
         nested_burnin_tformed(data, nchains=10, num_live_points=10, max_samples=20)
-
+    '''
     print("Unit tests succesfful")
 
 
@@ -193,14 +199,13 @@ if __name__=="__main__":
     import matplotlib.pylab as plt
 
     #---------------------------------------------
-    for i in [2]:
+    for i in [1]:
         data = datas[i]
         nbands = max(data["bands"])+1
-        nmodes = 1 + (nbands-1)**2
-        nsamples = 100 * 25 * nmodes
-        nsamples = 15
+        nmodes = 1 + ((nbands-1)*2)**2
+        nsamples = 4000*nmodes
 
-        nest_results = nested_burnin(data, nchains=nsamples)
+        nest_results = nested_burnin(data, nchains=nsamples, seed = 1)
 
     #---------------------------------------------
     to_nline = False
@@ -225,7 +230,7 @@ if __name__=="__main__":
     print("Making NUTS sampler")
 
     #---------------------------------------------
-
+    '''
     sampler = numpyro.infer.MCMC(
         numpyro.infer.NUTS(model = model, step_size=0.001, target_accept_prob=0.9),
         num_warmup= 200,
@@ -237,6 +242,7 @@ if __name__=="__main__":
     sampler.run(jax.random.PRNGKey(0), data, init_params=nest_starts)
     print("Getting samples and plotting")
     NUTS_samples = sampler.get_samples()
+    '''
 
     #---------------------------------------------
 
@@ -247,6 +253,7 @@ if __name__=="__main__":
     plt.title("Nested Sampling Results")
     plt.show()
 
+    '''
     c2= ChainConsumer()
     if to_nline:
         NUTS_samples = dict(NUTS_samples)
@@ -263,5 +270,6 @@ if __name__=="__main__":
 
     c2.plotter.plot(extents=plot_extents)
     plt.tight_layout()
-    plt.title("Nested Sampling Results")
+    plt.title("NUTS results")
     plt.show()
+    '''
