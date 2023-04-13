@@ -14,7 +14,7 @@ KEYS = np.loadtxt("outchain_keys.dat", dtype="str_")
 
 c = ChainConsumer()
 c.add_chain(DATA, parameters = list(KEYS), name = "HMC")
-c.add_chain(NEST_SEED, parameters = list(KEYS), name = "Nest Seeds", plot_contour = False, cloud = True, show_as_1d_prior = False)
+#c.add_chain(NEST_SEED, parameters = list(KEYS), name = "Nest Seeds")
 c.add_chain(NEST_FULL, parameters = list(KEYS), name = "Nest Full")
 
 truth = {"rel_amps_0" : 1,
@@ -28,7 +28,7 @@ truth = {"rel_amps_0" : 1,
 extents = {"amps_0" :       (0,10),
          "amps_1" :         (0,10),
          "log_sigma_c" :    (-2.5,2.5),
-         "log_tau" :        (2,8),
+         "log_tau" :        (1,8),
          "means_0":         (-20,20),
          "means_1":         (-20,20),
          "means_2":         (-20,20),
@@ -36,7 +36,7 @@ extents = {"amps_0" :       (0,10),
          "lags_2":          (0,800)
            }
 
-c.plotter.plot(filename ="./contours.png", truth=truth, extents=extents)
+c.plotter.plot(filename ="./contours.png", extents=extents)
 
 #==================================
 fig,ax = plt.subplots(2,1)

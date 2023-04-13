@@ -105,17 +105,17 @@ if __name__=="__main__":
     print("Starting unit tests")
 
     # load some example data
-    rootfol = "../Data/data_fake/360day/"
+    rootfol = "../Data/real_data/00-B-2925372393/"
 
     truelag1=150
-    truelag2=160
+    truelag2=150
 
     cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
-    line1 = array_to_lc(np.loadtxt(rootfol + "line1.dat"))
-    line2 = array_to_lc(np.loadtxt(rootfol + "line2.dat"))
-
+    line1 = array_to_lc(np.loadtxt(rootfol + "MGII.dat"))
+    line2 = array_to_lc(np.loadtxt(rootfol + "CIV.dat"))
     #Make into banded format
     data  = lc_to_banded([cont, line1, line2])
+    data = data_utils.data_tform(data, data_utils.normalize_tform(data))
 
     #==============================
     import eval_and_opt
@@ -123,30 +123,40 @@ if __name__=="__main__":
 
     print("---------------------")
 
-    def lossfunc(params):
+
+    def lossfunc(params,lags = jnp.array([540,540])):
         params = copy(params)
-        params = params |  {"lags":jnp.array([0,0])}
+        params = params |  {"lags":lags}
         out = eval_and_opt._loss_nline(data, params, 3)
-        return(-out)
+
+        #out-=jnp.product(1-jnp.exp(-params["rel_amps"]*50))
+
+        out = -out
+
+        return(out)
 
     print("---------------------")
 
     init_params = data_utils.default_params(Nbands=3)
     init_params.pop('lags')
 
-    print(init_params, lossfunc(init_params))
+    start_params["log_tau"]=3
+    start_params["log_sigma_c"]=0.53
+    start_params["means_0"]=-2.3
+    start_params["means_1"]=-0.5
+    start_params["rel_amps_1"]=0.78
+    start_params["rel_amps_2"]=0.06
+
+    f = lambda params: lossfunc(params,jnp.array([180,180]))
+    print(init_params, f(init_params))
     print("Making Optimizer")
-    opt = jaxopt.ScipyMinimize(fun=lossfunc)
+    opt = jaxopt.ScipyMinimize(fun=f, tol = 1E-15)
     print("---------------------")
     print("Running Optimizer")
     soln = opt.run(init_params)
 
     print("---------------------")
-    print(soln.params, lossfunc(soln.params))
-
-    ns_params = {
-        "mea"
-    }
+    print(soln.params, f(soln.params))
 
     print("Doing NS")
     print("---------------------")
@@ -155,7 +165,17 @@ if __name__=="__main__":
                                                                  "max_samples": 50*5*(2+1)*100})
     ns.run(jax.random.PRNGKey(0), data, start_params)
 
-    out = ns.get_samples(jax.random.PRNGKey(0), 5*1000)
+    print("First pass done")
+    #first_pass = jnp.array([ns.get_samples(jax.random.PRNGKey(0), 1)["lags_1"],ns.get_samples(jax.random.PRNGKey(0), 1)["lags_2"]])
+    #print(first_pass)
+
+    if False:
+        f = lambda params: lossfunc(params, first_pass)
+        soln = opt.run(soln.params)
+        opt = jaxopt.ScipyMinimize(fun=f, tol=1E-15)
+        ns.run(jax.random.PRNGKey(0), data, soln.params)
+
+    out = ns.get_samples(jax.random.PRNGKey(0), 50*5*(2+1)*100)
 
     c = ChainConsumer()
     c.add_chain(out)
