@@ -1,0 +1,15 @@
+INFO[2023-04-13 17:01:00,120]: Unable to initialize backend 'cuda': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-13 17:01:00,121]: Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-13 17:01:00,121]: Unable to initialize backend 'tpu': INVALID_ARGUMENT: TpuPlatform is not available.
+INFO[2023-04-13 17:01:00,121]: Unable to initialize backend 'plugin': xla_extension has no attributes named get_plugin_device_client. Compile TensorFlow with //tensorflow/compiler/xla/python:enable_plugin_device set to true (defaults to false) to enable this.
+WARNING[2023-04-13 17:01:00,122]: No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+SIMBA SAFETY LOAD DEBUG:	 get_args
+34 i
+Traceback (most recent call last):
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 126, in <module>
+    main()
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 50, in main
+    job_args = SIMBA.get_args(args.i, table_url=args.table)
+  File "/data/uqhmcdou/HM_Lag_Recovery/SIMBA.py", line 75, in wrapped_func
+    raise Exception("Attempted to edit non-existant file %s in %s" %(table_url, fname))
+Exception: Attempted to edit non-existant file ./SIMBA_jobstatus.dat in get_args

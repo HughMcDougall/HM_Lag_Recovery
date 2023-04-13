@@ -33,8 +33,8 @@ import os
 #----------------------
 #Default variables
 _def_tab_url = "./SIMBA_jobstatus.dat"
-_load_sleeptime = 0.1
-_load_maxits = 1000
+_load_sleeptime = 1.0
+_load_maxits = 50000
 #----------------------
 def _timef():
     '''Returns local time as a formatted string. For printing start/ end times'''

@@ -1,5 +1,0 @@
-INFO[2023-04-13 16:50:01,002]: Unable to initialize backend 'cuda': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
-INFO[2023-04-13 16:50:01,002]: Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
-INFO[2023-04-13 16:50:01,004]: Unable to initialize backend 'tpu': INVALID_ARGUMENT: TpuPlatform is not available.
-INFO[2023-04-13 16:50:01,004]: Unable to initialize backend 'plugin': xla_extension has no attributes named get_plugin_device_client. Compile TensorFlow with //tensorflow/compiler/xla/python:enable_plugin_device set to true (defaults to false) to enable this.
-WARNING[2023-04-13 16:50:01,005]: No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
