@@ -72,7 +72,7 @@ def main():
 
     # Convert to banded and normalize
     banded_data = lc_to_banded(lcs_unbanded)
-    #banded_data = data_tform(banded_data, normalize_tform(banded_data))
+    banded_data = data_tform(banded_data, normalize_tform(banded_data))
 
     # Output light curve for checking
     out, out_keys = flatten_dict(banded_data)

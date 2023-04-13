@@ -144,8 +144,8 @@ if __name__=="__main__":
 
     #load some example data
 
-    cont  = array_to_lc(np.loadtxt("./Data/data_fake/clearsignal/cont.dat"))
-    line1 = array_to_lc(np.loadtxt("./Data/data_fake/clearsignal/line2.dat"))
+    cont  = array_to_lc(np.loadtxt("../Data/data_fake/clearsignal/cont.dat"))
+    line1 = array_to_lc(np.loadtxt("../Data/data_fake/clearsignal/line2.dat"))
 
 
     #Make into banded format
@@ -171,13 +171,14 @@ if __name__=="__main__":
         'lag': [0,1000]
     }
 
-    nchains     = 40
+    nchains     = 5
     nburn       = 200
     nsample     = 600
     
     init_params = copy(true_params)
+    init_params.pop('lag')
 
-
+    '''
     from numpyro.contrib.nested_sampling import NestedSampler
     NS = NestedSampler(model,
                        constructor_kwargs={"num_live_points":50*4*(4+1), "max_samples":nchains*nburn*10})
@@ -190,6 +191,7 @@ if __name__=="__main__":
     c.plotter.plot(truth=true_params, extents=extents)
     plt.tight_layout()
     plt.show()
+    '''
     #------------------------------
 
 
@@ -200,8 +202,6 @@ if __name__=="__main__":
         numpyro.infer.NUTS(
                             model,
                            init_strategy=numpyro.infer.init_to_value(values=init_params),
-                            target_accept_prob=0.2
-
                            ),
         num_chains = nchains,
         num_warmup = nburn,
@@ -217,6 +217,14 @@ if __name__=="__main__":
     c = ChainConsumer()
     c.add_chain(out)
     c.plotter.plot(truth=true_params, extents=extents)
+    plt.tight_layout()
+    plt.show()
+
+    c2 = ChainConsumer()
+    c2.add_chain({"lag":out["lag"],
+                  "log_tau":out["log_tau"],
+                  })
+    c2.plotter.plot(truth=true_params, extents=extents)
     plt.tight_layout()
     plt.show()
 
@@ -282,17 +290,23 @@ if __name__=="__main__":
     plt.show()
 
     #------------------------------
-    plt.figure()
+    plt.figure(figsize=(4,4))
     X = out['lag']
     Y = out['log_tau']
 
+    plt.imshow(Z2[::-1, ::],
+               interpolation='none', cmap='gray',
+               extent=[min(lag_plot),max(lag_plot),min(logtau_plot),max(logtau_plot)],
+               aspect="auto",
+               vmin=np.min(Z2)  *1.25)
+
     for i in range(nchains):
         if i%50==0: print(i)
-        plt.plot(X[i*nsample:(i+1)*nsample], Y[i*nsample:(i+1)*nsample], lw=0.1)
+        plt.plot(X[i*nsample:(i+1)*nsample], Y[i*nsample:(i+1)*nsample], lw=0.1, c='r')
 
-    plt.axvline(true_params['lag'])
-    plt.axhline(true_params['log_tau'])
+    plt.axvline(true_params['lag'], c='k', ls='--')
+    plt.axhline(true_params['log_tau'], c='k', ls='--')
     plt.xlabel("lag")
     plt.ylabel("log_tau")
-    plt.title("Chain paths")
+    plt.title("Chain paths, post-burnin")
     plt.show()

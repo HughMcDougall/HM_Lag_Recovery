@@ -60,7 +60,7 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
         assert nchains_int<max_samples, "Attempted to draw %i samples from maximum of %i in nested_burnin" %(nchains_int, max_samples)
     else:
         for num_samples in nchains_int:
-            assert nchains_int < max_samples, "Attempted to draw %i samples from maximum of %i in nested_burnin" % (
+            assert num_samples < max_samples, "Attempted to draw %i samples from maximum of %i in nested_burnin" % (
             num_samples, max_samples)
 
     #----
@@ -81,7 +81,7 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
     if type(nchains_int) == int:
         samples = ns.get_samples(jax.random.PRNGKey(seed), nchains_int)
     else:
-        samples = [ns.get_samples(jax.random.PRNGKey(seed), nchains_int) for num_samples in nchains]
+        samples = [ns.get_samples(jax.random.PRNGKey(seed), num_samples) for num_samples in nchains]
 
     return(samples)
 

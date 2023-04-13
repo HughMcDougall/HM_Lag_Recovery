@@ -8,6 +8,9 @@ HM 9/4
 
 #============================================
 import sys
+
+import data_utils
+
 sys.path.append("..")
 import numpy as np
 
@@ -26,35 +29,42 @@ if __name__=="__main__":
 
     # load some example data
     rootfol = "../Data/data_fake/150day-bad/"
+    rootfol = "../Data/real_data/00-B-2925372393/"
 
     truelag1=150
     truelag2=150
 
     cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
-    line1 = array_to_lc(np.loadtxt(rootfol + "line1.dat"))
-    line2 = array_to_lc(np.loadtxt(rootfol + "line2.dat"))
+    line1 = array_to_lc(np.loadtxt(rootfol + "CIV.dat"))
+    line2 = array_to_lc(np.loadtxt(rootfol + "MGII.dat"))
 
     #Make into banded format
-    data  = lc_to_banded([cont, line1])
+    data  = lc_to_banded([cont, line1,line2])
+    data = data_utils.data_tform(data, data_utils.normalize_tform(data))
 
+    fixed_params = data_utils.default_params(np.max(data["bands"]))
+    fixed_params["log_tau"] = 1
+    fixed_params["log_sigma_c"] = 0.5
+    fixed_params["rel_amps"] = jnp.array([1,0.1])
+    fixed_params["means"] = jnp.array([-2,0,0])
 
-    gridloss = lambda x,y: loss(data, {"lags": jnp.array([x,y])})
-    gridloss = lambda x,y: loss(data, {"lags": jnp.array([x,160]), "log_tau": y})
+    gridloss = lambda x,y: loss(data, fixed_params | {"lags": jnp.array([x,y])})
+    #gridloss = lambda x,y: loss(data, {"lags": jnp.array([x,160]), "log_tau": y})
 
     nplot = 128
     lag1 = np.linspace(0,config.lag_max, nplot)
     lag2 = np.linspace(0,config.lag_max, nplot)
-    log_taus = np.linspace(config.log_tau_min, config.log_tau_max, nplot)
+    #log_taus = np.linspace(config.log_tau_min, config.log_tau_max, nplot)
 
     X = lag1
-    Y = log_taus
+    Y = lag2
 
-    true_x = 150
-    true_y = 6
+    true_x = 540
+    true_y = 540
 
     xlabel = "$\Delta t_{1}$"
     ylabel = "$\Delta t_{2}$"
-    ylabel = "$\ ln| \\tau |$"
+    #ylabel = "$\ ln| \\tau |$"
 
     Z = np.zeros([nplot,nplot])
     for i in range(nplot):
