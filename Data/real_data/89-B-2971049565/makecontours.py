@@ -38,6 +38,6 @@ c.remove_chain()
 c.remove_chain()
 
 c.plotter.plot(filename ="./contours_clean.png", extents=extents)
-c.plotter.plot(filename ="./contours_clean.png", extents=extents, parameters = ["lags_1","lags_2"])
+c.plotter.plot(filename ="./contours_clean_lagsonly.png", extents=extents, parameters = ["lags_1","lags_2"])
 
 #=======================================

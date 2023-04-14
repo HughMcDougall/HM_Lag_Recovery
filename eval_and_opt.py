@@ -98,6 +98,20 @@ def loss(data, params):
         params = data_utils.default_params(Nbands) | params
         return (_loss_cont(data, params))
 
+#=================================================================
+def scan(banded_data, scan_params, fixed_params = "None"):
+    '''
+    Runs a scan over
+    :param scan_params:
+    :param fixed_params:
+    :return:
+    '''
+    #Safety check to make sure we don't over-write when using fixed_params
+    fixed_params= copy(fixed_params)
+    for key in scan_params.keys():
+        if key in fixed_params.keys():
+            fixed_params.pop(key)
+
 
 
 #=================================================================
