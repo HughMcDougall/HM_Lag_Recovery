@@ -14,7 +14,7 @@ KEYS = np.loadtxt("outchain_keys.dat", dtype="str_")
 
 c = ChainConsumer()
 c.add_chain(DATA, parameters = list(KEYS), name = "HMC")
-#c.add_chain(NEST_SEED, parameters = list(KEYS), name = "Nest Seeds")
+c.add_chain(NEST_SEED, parameters = list(KEYS), name = "Nest Seeds")
 c.add_chain(NEST_FULL, parameters = list(KEYS), name = "Nest Full")
 
 truth = {"rel_amps_0" : 1,
