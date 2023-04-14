@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task 1
 #SBATCH --mem-per-cpu=64G
 #SBATCH --time=2-00:00:00
-#SBATCH --array=0,1,2,3,8,9,12,15,16,17,37,43,47,51,54,57,58,60,61,66,67,68,69,75,80,83,87,90,91
+#SBATCH --array=4,5,6,7,10,11,13,14,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,38,39,40,41,42,44,45,46,48,49,50,52,53,55,56,59,62,63,64,65,70,71,72,73,74,76,77,78,79,81,82,84,85,86,88,89,92,
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=hmgetafix@gmail.com
 #SBATCH --output=./slurm_logs/slurm-%j.out
