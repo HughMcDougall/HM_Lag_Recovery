@@ -1,0 +1,17 @@
+INFO[2023-04-14 03:26:33,546]: Unable to initialize backend 'cuda': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-14 03:26:33,546]: Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-14 03:26:33,547]: Unable to initialize backend 'tpu': INVALID_ARGUMENT: TpuPlatform is not available.
+INFO[2023-04-14 03:26:33,547]: Unable to initialize backend 'plugin': xla_extension has no attributes named get_plugin_device_client. Compile TensorFlow with //tensorflow/compiler/xla/python:enable_plugin_device set to true (defaults to false) to enable this.
+WARNING[2023-04-14 03:26:33,547]: No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+SIMBA SAFETY LOAD DEBUG:	 get_args
+50 i
+bad login of ./SIMBA_jobstatus.dat attempt 1 in get_args
+good login of ./SIMBA_jobstatus.dat in get_args
+Traceback (most recent call last):
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 126, in <module>
+    main()
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 58, in main
+    line2 = array_to_lc(np.loadtxt(job_args["line2_url"]))
+  File "/data/uqhmcdou/HM_Lag_Recovery/data_utils.py", line 36, in array_to_lc
+    if data.shape[1]==3:
+IndexError: tuple index out of range
