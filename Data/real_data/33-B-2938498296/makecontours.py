@@ -39,5 +39,7 @@ c.remove_chain()
 
 c.plotter.plot(filename ="./contours_clean.png", extents=extents)
 c.plotter.plot(filename ="./contours_clean_lagsonly.png", extents=extents, parameters = ["lags_1","lags_2"])
+c.plotter.plot(filename ="./contours_clean_contonly.png", extents=extents, parameters = ["log_sigma_c","log_tau"])
+c.plotter.plot_distributions(filename = "./summary_clean.png", extents=extents)
 
 #=======================================
