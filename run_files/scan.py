@@ -28,19 +28,26 @@ if __name__=="__main__":
     print("Starting unit tests")
 
     # load some example data
-    rootfol = "../Data/data_fake/150day-bad/"
-    rootfol = "../Data/real_data/19-A-2925858108/"
+    rootfol = "../Data/data_fake/360day/"
+    #rootfol = "../Data/data_fake/150day-bad/"
+    #rootfol = "../Data/real_data/19-A-2925858108/"
 
-    truelag1=150
-    truelag2=150
+    truelag1=350
+    truelag2=360
 
+    cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
+    line1 = array_to_lc(np.loadtxt(rootfol + "line1.dat"))
+    line2 = array_to_lc(np.loadtxt(rootfol + "line2.dat"))
+
+    '''
     cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
     line1 = array_to_lc(np.loadtxt(rootfol + "MGII.dat"))
     line2 = array_to_lc(np.loadtxt(rootfol + "Hbeta.dat"))
+    '''
 
     #Make into banded format
     data  = lc_to_banded([cont, line1,line2])
-    data = data_utils.data_tform(data, data_utils.normalize_tform(data))
+    #data = data_utils.data_tform(data, data_utils.normalize_tform(data))
 
     fixed_params = data_utils.default_params(np.max(data["bands"]))
     '''
@@ -54,7 +61,7 @@ if __name__=="__main__":
     gridloss = lambda x,y: loss(data, fixed_params | {"lags": jnp.array([x,y])})
     #gridloss = lambda x,y: loss(data, {"lags": jnp.array([x,160]), "log_tau": y})
 
-    nplot = 256
+    nplot = 128
     lag1 = np.linspace(0,config.lag_max, nplot)
     lag2 = np.linspace(0,config.lag_max, nplot)
     #log_taus = np.linspace(config.log_tau_min, config.log_tau_max, nplot)
@@ -62,8 +69,8 @@ if __name__=="__main__":
     X = lag1
     Y = lag2
 
-    true_x = 540
-    true_y = 540
+    true_x = 350
+    true_y = 360
 
     xlabel = "$\Delta t_{1}$"
     ylabel = "$\Delta t_{2}$"

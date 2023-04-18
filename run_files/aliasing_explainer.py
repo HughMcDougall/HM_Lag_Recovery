@@ -140,7 +140,7 @@ plt.imshow(Z1, aspect="auto",extent=[tmin,tmax,ymin,ymax], cmap='binary')
 plt.errorbar(T1,Y1,yerr=E1*1.96,fmt="none",capsize=2,label="Measurements")
 plt.xlabel("Time")
 plt.ylabel("Signal")
-plt.legend(loc='best')
+plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.3, 0, 0))
 plt.tight_layout()
 plt.show()
 
@@ -164,9 +164,9 @@ for i in range(2):
     badness  = np.exp(-(dY/Eplot1)**2)
 
 
-    Z = (Z1 / np.max(Z1))**1
+    Z = (Z1 / np.max(Z1))**1.5
 
-    alph = 1.5
+    alph = 2
     bet = 1.4
     gam = 0.25
     R = 1-Z*alph*(badness * (1-gam) + gam)**bet
@@ -176,7 +176,7 @@ for i in range(2):
 
     C = np.stack([R,G,B],axis=2)
 
-    plt.figure(figsize = (4,2.5))
+    plt.figure(figsize = (5,3.8))
     plt.imshow(C, aspect="auto",extent=[tmin,tmax,ymin,ymax], cmap='binary', vmin=0, vmax=1)
 
     plt.plot(Tplot,Yplot1, c='green')
@@ -187,7 +187,7 @@ for i in range(2):
 
     plt.xlabel("Time")
     plt.ylabel("Signal")
-    plt.legend(loc='best')
+    plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.3, 0, 0),ncols = 2)
     plt.tight_layout()
     plt.show()
 
@@ -217,7 +217,7 @@ for i in range(len(lags)):
     likelihoods[i] = likelihood(Y,K)
 likelihoods/=np.max(likelihoods)
 
-plt.figure(figsize=(4,2.5))
+plt.figure(figsize=(5,4.5))
 plt.plot(lags,np.log(likelihoods))
 dt = T1[1] - T1[0]
 for i in range(int(max(lags)//dt)+1):
@@ -233,7 +233,7 @@ for i in range(int(max(lags)//dt)+1):
         plt.axvline(dt*i+tau,c='k',ls=':',lw=0.5,)
         plt.axvline(dt*i-tau,c='k',ls=':',lw=0.5)
 plt.axhline(0,c='k',lw=0.5,ls='--')
-plt.legend(loc='best')
+plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.3, 0, 0), ncols = 3)
 plt.ylim(-5,1)
 plt.xlabel("Time-Shift Of Signal 2")
 plt.ylabel("$\Delta ln|\mathcal{L}| $")
