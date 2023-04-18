@@ -12,11 +12,11 @@ Stored here for easy access and consistency
 lag_min = 0.0
 lag_max = 800
 
-log_tau_min = 1.0
-log_tau_max = 8.0
+log_tau_min = 2.0
+log_tau_max = 14.0
 
-log_sigma_c_min = -2.5
-log_sigma_c_max = 2.5
+log_sigma_c_min = -2
+log_sigma_c_max = 4
 
 rel_amp_min =0.0
 rel_amp_max =10.0
