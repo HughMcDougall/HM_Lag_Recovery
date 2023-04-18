@@ -8,7 +8,7 @@ K = 1000
 a = 2
 nsamples = 800
 nburn = 700
-n=2
+n=4
 
 sig1 = 60/2
 sig2 = 60/2
@@ -85,7 +85,7 @@ print(new / (K*nsamples))
 
 
 Xchain = [np.array([Xout[i*K+k,:] for i in range(nsamples+1)]) for k in range(K)]
-for chain in Xchain[::50]:
+for chain in Xchain[::1]:
     plt.plot(chain[:,0],chain[:,1],lw=0.1)
 
 plt.axis('equal')
