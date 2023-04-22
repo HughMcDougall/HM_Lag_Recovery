@@ -1,0 +1,38 @@
+INFO[2023-04-21 13:59:22,493]: Unable to initialize backend 'cuda': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-21 13:59:22,493]: Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-21 13:59:22,494]: Unable to initialize backend 'tpu': INVALID_ARGUMENT: TpuPlatform is not available.
+INFO[2023-04-21 13:59:22,494]: Unable to initialize backend 'plugin': xla_extension has no attributes named get_plugin_device_client. Compile TensorFlow with //tensorflow/compiler/xla/python:enable_plugin_device set to true (defaults to false) to enable this.
+WARNING[2023-04-21 13:59:22,494]: No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+SIMBA SAFETY LOAD DEBUG:	 get_args
+27 i
+good login of ./SIMBA_jobstatus.dat in get_args
+Beginning job 27 on job list ./SIMBA_jobstatus.dat with mode twoline
+Data loaded. Saving normalized lightcurve to ./Data/real_data/27-B-2938228331/banded_data.dat
+SIMBA SAFETY LOAD DEBUG:	 start
+27 i
+good login of ./SIMBA_jobstatus.dat in start
+Traceback (most recent call last):
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 126, in <module>
+    main()
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 104, in main
+    SIMBA.start(args.i, table_url = args.table, comment = "Job started /w %i chains, %i samples, %i burn in and %i cores" %(args.Nchains, args.Nsamples, args.Nburn, args.Ncores))
+  File "/data/uqhmcdou/HM_Lag_Recovery/SIMBA.py", line 92, in wrapped_func
+    return( func(*args, **kwargs) )
+  File "/data/uqhmcdou/HM_Lag_Recovery/SIMBA.py", line 137, in start
+    table = pd.read_csv(table_url, sep='\t', index_col=0)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/util/_decorators.py", line 211, in wrapper
+    return func(*args, **kwargs)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/util/_decorators.py", line 331, in wrapper
+    return func(*args, **kwargs)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 950, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 605, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1442, in __init__
+    self._engine = self._make_engine(f, self.engine)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/io/parsers/readers.py", line 1753, in _make_engine
+    return mapping[engine](f, **self.options)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/io/parsers/c_parser_wrapper.py", line 79, in __init__
+    self._reader = parsers.TextReader(src, **kwds)
+  File "pandas/_libs/parsers.pyx", line 554, in pandas._libs.parsers.TextReader.__cinit__
+pandas.errors.EmptyDataError: No columns to parse from file
