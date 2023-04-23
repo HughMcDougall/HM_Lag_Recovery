@@ -57,14 +57,14 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
     if num_live_points ==0:
         num_live_points = 100*num_modes * (num_dims+1)
     if max_samples == 0:
-        max_samples = num_live_points * 40
+        max_samples = num_live_points * 100
     print("In nested_burnin:\t num_live:\t%i\tmax_samples:\t%i" % (num_live_points, max_samples))
 
     if type(nchains_int)==int:
-        assert nchains_int<max_samples, "Attempted to draw %i samples from maximum of %i in nested_burnin" %(nchains_int, max_samples)
+        assert nchains_int<=max_samples, "Attempted to draw %i samples from maximum of %i in nested_burnin" %(nchains_int, max_samples)
     else:
         for num_samples in nchains_int:
-            assert num_samples < max_samples, "Attempted to draw %i samples from maximum of %i in nested_burnin" % (
+            assert num_samples <= max_samples, "Attempted to draw %i samples from maximum of %i in nested_burnin" % (
             num_samples, max_samples)
 
     #----

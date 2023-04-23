@@ -94,9 +94,9 @@ def main():
     }
 
     # Actually run
-    SIMBA.start(args.i, table_url = args.table, comment = "%s Job started /w %i chains, %i samples, %i burn in and %i cores. NS-live = %i, NS-samp = %i" %(mode, args.Nchains, args.Nsamples, args.Nburn, args.Ncores, args.NS_numlive, args.NS_args))
+    SIMBA.start(args.i, table_url = args.table, comment = "%s Job started /w %i chains, %i samples, %i burn in and %i cores. NS-live = %i, NS-samp = %i" %(mode, args.Nchains, args.Nsamples, args.Nburn, args.Ncores, args.NS_numlive, args.NS_maxevals))
     output, nest_seeds, nest_full = fit_single_source(banded_data, MCMC_params=MCMC_params, return_nested_full = True, return_nested_seeds=True) #Main MCMC run
-    SIMBA.finish(args.i, table_url = args.table, comment = "%s Job Done /w %i chains, %i samples, %i burn in and %i cores. NS-live = %i, NS-samp = %i" %(mode, args.Nchains, args.Nsamples, args.Nburn, args.Ncores, args.NS_numlive, args.NS_args))
+    SIMBA.finish(args.i, table_url = args.table, comment = "%s Job Done /w %i chains, %i samples, %i burn in and %i cores. NS-live = %i, NS-samp = %i" %(mode, args.Nchains, args.Nsamples, args.Nburn, args.Ncores, args.NS_numlive, args.NS_maxevals))
 
     # Outputs
     print("Job finished. Saving to %s" %(job_args["out_url"]+"outchain-%s.dat" %mode) )
