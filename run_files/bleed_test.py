@@ -4,15 +4,15 @@ from copy import deepcopy as copy
 from chainconsumer import ChainConsumer
 
 #-------------------------------------------------------------------------
-K = 1000
+K = 5000 # Num Points
 a = 2
 nsamples = 800
 nburn = 700
-n=4
+n=2
 
 sig1 = 60/2
 sig2 = 60/2
-sep  = 360
+sep  = 100
 
 def P(X):
     x,y = X
@@ -84,8 +84,10 @@ print(new / (K*nsamples))
 #-------------------------------------------------------------------------
 
 
+#========
+sparseness=25
 Xchain = [np.array([Xout[i*K+k,:] for i in range(nsamples+1)]) for k in range(K)]
-for chain in Xchain[::1]:
+for chain in Xchain[::sparseness]:
     plt.plot(chain[:,0],chain[:,1],lw=0.1)
 
 plt.axis('equal')
@@ -95,8 +97,10 @@ plt.scatter(Xout[-K:,0],Xout[-K:,1],s=0.5)
 plt.ylim([-sep*2,sep*2])
 plt.show()
 
-pltlims = sep*2
+#========
 fig,ax = plt.subplots(2,1,sharex=True)
+pltlims = sep*2
+
 ax[0].hist(Xstart[:,1],bins=64, range=[-pltlims , pltlims ], density = True)
 ax[1].hist(Xout[nburn*K:,1],bins=64, range=[-pltlims , pltlims ], density = True)
 
@@ -105,9 +109,12 @@ ax[0].plot(ys,[P([0,y]) for y in ys])
 ax[1].plot(ys,[P([0,y]) for y in ys])
 plt.show()
 
+#========
+chain_pltlims = sep+sig2*2
 c = ChainConsumer()
-c.add_chain(Xstart)
+c.add_chain(Xstart,parameters=['X','Y'])
 c.add_chain(Xout[nburn*K:])
-c.plotter.plot()
+c.plotter.plot(extents={"X": [-chain_pltlims,chain_pltlims],
+                        "Y": [-chain_pltlims,chain_pltlims]})
 plt.tight_layout()
 plt.show()
