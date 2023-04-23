@@ -1,0 +1,22 @@
+INFO[2023-04-23 20:08:26,934]: Unable to initialize backend 'cuda': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-23 20:08:26,934]: Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-23 20:08:26,935]: Unable to initialize backend 'tpu': INVALID_ARGUMENT: TpuPlatform is not available.
+INFO[2023-04-23 20:08:26,935]: Unable to initialize backend 'plugin': xla_extension has no attributes named get_plugin_device_client. Compile TensorFlow with //tensorflow/compiler/xla/python:enable_plugin_device set to true (defaults to false) to enable this.
+WARNING[2023-04-23 20:08:26,935]: No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+/data/uqhmcdou/HM_Lag_Recovery/fitting_procedure.py:94: UserWarning: There are not enough devices to run parallel chains: expected 300 but got 1. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(300)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
+  sampler = numpyro.infer.MCMC(
+SIMBA SAFETY LOAD DEBUG:	 get_args
+120 i
+good login of ./SIMBA_jobstatus.dat in get_args
+Beginning job 120 on job list ./SIMBA_jobstatus_oneline.dat with mode line1
+SIMBA SAFETY LOAD DEBUG:	 start
+120 i
+good login of ./SIMBA_jobstatus.dat in start
+{'Ncores': 1, 'Nchain': 300, 'Nburn': 1000, 'Nsample': 200, 'step_size': 0.001, 'progress_bar': 0.0, 'targ_acc_prob': 0.9, 'ns_num_live': 0, 'ns_max_samples': 0}
+Acquiring modes with nested sampling with 0 live points
+In nested_burnin:	 num_live:	2100	max_samples:	210000
+Doing main NUTS run with 300 chains, 1000 burn-in and 200 samples with step size starting at 0.001000
+SIMBA SAFETY LOAD DEBUG:	 finish
+120 i
+good login of ./SIMBA_jobstatus.dat in finish
+Job finished. Saving to ./Data/real_data/60-B-2940140085/outchain-line1.dat

@@ -1,0 +1,24 @@
+INFO[2023-04-23 20:08:28,124]: Unable to initialize backend 'cuda': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-23 20:08:28,124]: Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-23 20:08:28,125]: Unable to initialize backend 'tpu': INVALID_ARGUMENT: TpuPlatform is not available.
+INFO[2023-04-23 20:08:28,126]: Unable to initialize backend 'plugin': xla_extension has no attributes named get_plugin_device_client. Compile TensorFlow with //tensorflow/compiler/xla/python:enable_plugin_device set to true (defaults to false) to enable this.
+WARNING[2023-04-23 20:08:28,126]: No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+SIMBA SAFETY LOAD DEBUG:	 get_args
+38 i
+good login of ./SIMBA_jobstatus.dat in get_args
+Traceback (most recent call last):
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit02.py", line 120, in <module>
+    main()
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit02.py", line 50, in main
+    job_args = SIMBA.get_args(args.i, table_url=args.table)
+  File "/data/uqhmcdou/HM_Lag_Recovery/SIMBA.py", line 92, in wrapped_func
+    return( func(*args, **kwargs) )
+  File "/data/uqhmcdou/HM_Lag_Recovery/SIMBA.py", line 189, in get_args
+    out = table.iloc[i].to_dict()
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/core/indexing.py", line 1073, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/core/indexing.py", line 1625, in _getitem_axis
+    self._validate_integer(key, axis)
+  File "/home/uqhmcdou/.conda/envs/lag_conda/lib/python3.10/site-packages/pandas/core/indexing.py", line 1557, in _validate_integer
+    raise IndexError("single positional indexer is out-of-bounds")
+IndexError: single positional indexer is out-of-bounds

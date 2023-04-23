@@ -1,0 +1,9 @@
+INFO[2023-04-23 20:08:38,638]: Unable to initialize backend 'cuda': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-23 20:08:38,638]: Unable to initialize backend 'rocm': module 'jaxlib.xla_extension' has no attribute 'GpuAllocatorConfig'
+INFO[2023-04-23 20:08:38,639]: Unable to initialize backend 'tpu': INVALID_ARGUMENT: TpuPlatform is not available.
+INFO[2023-04-23 20:08:38,639]: Unable to initialize backend 'plugin': xla_extension has no attributes named get_plugin_device_client. Compile TensorFlow with //tensorflow/compiler/xla/python:enable_plugin_device set to true (defaults to false) to enable this.
+WARNING[2023-04-23 20:08:38,639]: No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+/data/uqhmcdou/HM_Lag_Recovery/fitting_procedure.py:94: UserWarning: There are not enough devices to run parallel chains: expected 300 but got 1. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(300)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
+  sampler = numpyro.infer.MCMC(
+LLVM ERROR: pthread_create failed: Resource temporarily unavailable
+/var/spool/slurmd/job14778802/slurm_script: line 18:  5087 Aborted                 python LineFit02.py -Ncores 1 -Nchain 300 -Nburn 1000 -Nsamples 200 -i $SLURM_ARRAY_TASK_ID -progress_bar 0
