@@ -48,12 +48,16 @@ def nested_burnin(data, nchains, num_live_points = 0, max_samples = 0, seed = 0)
         except:
             raise TypeError("Bad type input to nested_burnin for nchains")
 
-    num_modes = ((Nbands-1)*2)*((Nbands-1)*2) + 1
-    num_dims  = 3*Nbands
+    if Nbands==1:
+        num_modes = 1
+    else:
+        num_modes = 2**(Nbands-1) + 1
+    num_dims  = 3 * Nbands
+
     if num_live_points ==0:
-        num_live_points = 50*num_modes * (num_dims+1)
+        num_live_points = 100*num_modes * (num_dims+1)
     if max_samples == 0:
-        max_samples = num_live_points * 20
+        max_samples = num_live_points * 40
     print("In nested_burnin:\t num_live:\t%i\tmax_samples:\t%i" % (num_live_points, max_samples))
 
     if type(nchains_int)==int:

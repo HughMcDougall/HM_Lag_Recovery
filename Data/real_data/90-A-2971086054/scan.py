@@ -42,20 +42,20 @@ if __name__=="__main__":
 
     fixed_params = data_utils.default_params(np.max(data["bands"]))
     fixed_params = fixed_params | {
-        "rel_amps":jnp.array([1.16,4.5]),
-        "means": jnp.array([2.23,0.03,-0.1])
+        "rel_amps":jnp.array([1.16,4.7]),
+        "means": jnp.array([0.28,0.12,-0.0])
     }
 
     #gridloss = lambda t1,t2,ltau: loss(data, fixed_params | {"lags": jnp.array([t1,t2])})
-    gridloss = lambda t1,t2,ltau,ramp2: loss(data, fixed_params | {"lags": jnp.array([t1,t2]), "log_sigma_c":0.03 + (ltau-4.85)*0.5, "log_tau": ltau, "rel_amps":jnp.array([1.16,ramp2])})
+    gridloss = lambda t1,t2,ltau,ramp2: loss(data, fixed_params | {"lags": jnp.array([t1,t2]), "log_sigma_c":0.05 + (ltau-4.91)*0.5, "log_tau": ltau, "rel_amps":jnp.array([1.16, ramp2])})
 
 
     nplot = 128
-    nint  = 12
+    nint  = 20
     lag1 = np.linspace(0,config.lag_max, nplot)
     lag2 = np.linspace(0,config.lag_max, nplot)
     #log_taus = np.linspace(4, 7.5, nint)
-    log_taus = np.linspace(4, 6.5, nint)
+    log_taus = np.linspace(4, 7.5, nint)
     ramp2s   = np.linspace(2, 8, nint)
 
     X = lag1
