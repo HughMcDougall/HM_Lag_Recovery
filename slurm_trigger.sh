@@ -2,7 +2,7 @@
 #SBATCH --job-name=HM_line_fit-job-%j
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task 1
-#SBATCH --mem-per-cpu=256G
+#SBATCH --mem-per-cpu=64G
 #SBATCH --time=2-00:00:00
 #SBATCH --array=0-185
 #SBATCH --mail-type=BEGIN,END,FAIL
