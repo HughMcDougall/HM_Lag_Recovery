@@ -194,6 +194,23 @@ def get_args(i=None, table_url=_def_tab_url):
 
     return(out)
 
+def get_status(i=None, table_url=_def_tab_url):
+    '''
+    Returns status of job. Good for reset checks
+    '''
+    
+    table = pd.read_csv(table_url, sep='\t', index_col=0)
+
+    out = table.iloc[i].to_dict()
+    
+    out = {"i":i,
+           "finished": out["finished"],
+           "start_time": out["start_time"],
+           "finish_time": out["finish_time"]
+           }
+
+    return(out)
+
 #----------------------
 def main():
     #MISSINGNO
