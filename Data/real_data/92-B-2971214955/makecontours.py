@@ -25,6 +25,7 @@ extents = {"amps_0" :       (0,10),
            }
 
 #=======================================
+#DOUBLE LINE FITS
 
 c = ChainConsumer()
 c.add_chain(DATA, parameters = list(KEYS), name = "HMC")
@@ -43,3 +44,12 @@ c.plotter.plot(filename ="./contours_clean_contonly.png", extents=extents, param
 c.plotter.plot_distributions(filename = "./summary_clean.png", extents=extents)
 
 #=======================================
+#SINGLE LINE COMPARISON
+
+DATA_1 = np.loadtxt("outchain-line1.dat")
+DATA_2 = np.loadtxt("outchain-line2.dat")
+
+c2 = ChainConsumer()
+c2.add_chain(DATA[:,:2], parameters = ["lags_1","lags_2"], name = "Simultaneous Fitting")
+c2.add_chain(np.array([DATA_1[:,0],DATA_2[:,0]]).T, parameters = ["lags_1","lags_2"], name = "Simultaneous Fitting")
+c2.plotter.plot(filename ="./contours_linecomparison.png", extents=extents)
