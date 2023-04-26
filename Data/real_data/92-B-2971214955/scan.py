@@ -143,7 +143,7 @@ if __name__=="__main__":
     plt.show()
 
     #-----------------------------------
-    fig,ax=plt.subplots(2,1, figsize=(4,3), sharex=True, sharey=True)
+    fig,ax=plt.subplots(2,1, figsize=(4,3), sharex=True)
     fig.suptitle("Marginalized Likelihoods")
     int1 = simpson(Z3, axis=1)* (Y[1]-Y[0])
     int2 = simpson(Z3, axis=0)* (X[1]-X[0])
@@ -160,6 +160,10 @@ if __name__=="__main__":
     ax[0].set_xlim(min(X),max(X))
     ax[1].set_xlim(min(Y),max(Y))
 
+    ax[0].set_ylim(max(int2)*-0.05,max(int2)*1.5)
+    ax[1].set_ylim(max(int1)*-0.05,max(int1)*1.5)
+    ax[0].set_yticks([])
+    ax[1].set_yticks([])
 
     plt.tight_layout()
     plt.savefig("./Prob_Marginal.png", format='png')
