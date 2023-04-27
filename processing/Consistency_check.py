@@ -16,7 +16,7 @@ table_url = "SIMBA_jobstatus.dat"
 njobs = 93
 nbins = 32
 
-do_correl = False
+do_correl = True
 do_lags = True
 
 COVARS = np.zeros([njobs,3])
