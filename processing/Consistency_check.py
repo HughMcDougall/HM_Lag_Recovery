@@ -23,7 +23,7 @@ COVARS = np.zeros([njobs,3])
 LAGS = np.zeros([njobs,5])
 
 #-------------------------
-for i in range(93):
+for i in range(njobs):
     args = SIMBA.get_args(i, table_url)
     targ_url = args["out_url"]
 
