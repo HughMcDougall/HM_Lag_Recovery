@@ -1,3 +1,6 @@
+#-------------------------
+
+#-------------------------
 import sys
 sys.path.append("..")
 
@@ -11,6 +14,13 @@ import matplotlib.pylab as plt
 from math import exp
 
 #-------------------------
+def getpeak(data):
+    h = np.histogram(data, bins = 64)
+    hData = h[0]
+    i = np.where(hData == np.max(hData))
+    return(np.mean(h[1][i]))
+
+#-------------------------
 
 table_url = "SIMBA_jobstatus.dat"
 njobs = 93
@@ -20,7 +30,7 @@ do_correl = True
 do_lags = True
 
 COVARS = np.zeros([njobs,3])
-LAGS = np.zeros([njobs,5])
+LAGS = np.zeros([njobs,13])
 
 #-------------------------
 for i in range(njobs):
@@ -57,17 +67,43 @@ for i in range(njobs):
     if do_lags:
         #Recover Lags
         lag_1       = np.median(DATA_LINE1)
-        lag_1_var   = np.percentile(DATA_LINE1, 100*(1-exp(-1)/2))-np.percentile(DATA_LINE1, 100*exp(-1)/2)
+        lag_1_var   = np.percentile(DATA_LINE1, 84.13)-np.percentile(DATA_LINE1, 15.87)
+        lag_1_peak  = getpeak(DATA_LINE1)
 
         lag_2       = np.median(DATA_LINE2)
-        lag_2_var   = np.percentile(DATA_LINE2, 100*(1-exp(-1)/2))-np.percentile(DATA_LINE2, 100*exp(-1)/2)
+        lag_2_var   = np.percentile(DATA_LINE2, 84.13)-np.percentile(DATA_LINE2, 15.87)
+        lag_2_peak  = getpeak(DATA_LINE2)
+
+        simlag_1       = np.median(DATA_LINE1)
+        simlag_1_var   = np.percentile(DATA_LINE1, 84.13)-np.percentile(DATA_LINE1, 15.87)
+        simlag_1_peak  = getpeak(DATA_LINE1)
+
+        simlag_2       = np.median(DATA_LINE2)
+        simlag_2_var   = np.percentile(DATA_LINE2, 84.13)-np.percentile(DATA_LINE2, 15.87)
+        simlag_2_peak  = getpeak(DATA_LINE2)
 
         LAGS[i,0] = i
-        LAGS[i,1] = lag_1
-        LAGS[i,2] = lag_1_var
-        LAGS[i,3] = lag_2
-        LAGS[i,4] = lag_2_var
+
+        LAGS[i,1] = lag_1_peak
+        LAGS[i,2] = lag_1
+        LAGS[i,3] = lag_1_var
+
+        LAGS[i,4] = lag_2_peak
+        LAGS[i,5] = lag_2
+        LAGS[i,6] = lag_2_var
+
+        LAGS[i,7] = simlag_1_peak
+        LAGS[i,8] = simlag_1
+        LAGS[i,9] = simlag_1_var
+
+        LAGS[i,10] = simlag_2_peak
+        LAGS[i,11] = simlag_2
+        LAGS[i,12] = simlag_2_var
+
+
 #-------------------------
+print("Saving outputs")
 os.chdir('./processing')
 if do_correl: np.savetxt('line_consistency_check.dat', COVARS, fmt=['%i','%.3f','%.3f'], delimiter='\t')
-if do_lags: np.savetxt('line_recovered_lags.dat', LAGS, fmt=['%i','%.3f','%.3f','%.3f','%.3f'], delimiter='\t')
+if do_lags: np.savetxt('line_recovered_lags.dat', LAGS, fmt=['%i'] + ['%.3f'] * (LAGS.shape[-1]-1), delimiter='\t')
+print("All done.")

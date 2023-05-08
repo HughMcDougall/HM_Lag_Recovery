@@ -51,5 +51,17 @@ DATA_2 = np.loadtxt("outchain-line2.dat")
 
 c2 = ChainConsumer()
 c2.add_chain(DATA[:,:2], parameters = ["lags_1","lags_2"], name = "Simultaneous Fitting")
-c2.add_chain(np.array([DATA_1[:,0],DATA_2[:,0]]).T, parameters = ["lags_1","lags_2"], name = "Simultaneous Fitting")
-c2.plotter.plot(filename ="./contours_linecomparison.png", extents=extents)
+c2.add_chain(np.array([DATA_1[:,0],DATA_2[:,0]]).T, parameters = ["lags_1","lags_2"], name = "Independent Fitting")
+c2.plotter.plot(filename ="./contours_linecomparison.jpg", extents=extents)
+
+
+#=======================================
+#Timescale Comparison
+IND_SIGMA_C = np.concatenate([DATA_1[:,1],DATA_2[:,1]])
+IND_TAU = np.concatenate([DATA_1[:,2],DATA_2[:,2]])
+
+c3 = ChainConsumer()
+c3.add_chain(np.array([DATA[:,2],DATA[:,3]]).T, parameters = ["log_sigma_c","log_tau"], name = "Simultaneous Fitting")
+c3.add_chain(np.array([IND_SIGMA_C,IND_TAU]).T, parameters = ["log_sigma_c","log_tau"], name = "Independent Fitting")
+c3.plotter.plot(filename ="./contours_linecomparison_cont.jpg", extents=extents)
+

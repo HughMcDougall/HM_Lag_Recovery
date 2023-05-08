@@ -51,79 +51,86 @@ ISGOOD_SIM = [True]*N
 #Figure 1: Plot loglog with scatterplot of lags
 #Todo - span this out to all 4 lag types
 fig, ax = plt.subplots(1,2, sharex=True, sharey=True)
+fig_nocut, ax_nocut = plt.subplots(1,2, sharex=True, sharey=True)
 
 alpha = 1/255
 size = 5
 sparseness = 4
+
 Lscatter = 0.005
 
 X_ind_formodel = []
 Y_ind_formodel = []
+E_ind_formodel = []
 
 X_sim_formodel = []
 Y_sim_formodel = []
+E_sim_formodel = []
 
 print("Doing plots")
 for i in range(N):
     print("\t %i" %(i))
 
+    #Get data and shift into rest frame
     L = LOGLUM[i]
     z = Z[i]
 
     Y_ind = np.log10(LAGS_IND[:,i]/(1+z))
     Y_sim = np.log10(LAGS_SIM[:,i]/(1+z))
 
+    #Add scatter in x dim to make plots nicer
     X_ind = np.ones_like(Y_ind) * L + np.random.randn(len(Y_ind))*Lscatter
     X_sim = np.ones_like(Y_sim) * L + np.random.randn(len(Y_sim))*Lscatter
 
-
-    sig_width_ind       = abs(np.percentile(LAGS_IND[:,i],84.13 )-np.percentile(LAGS_IND[:,i],15.87))
+    #Determine width and median - mode difference for all datasets
+    sig_width_ind       = abs(np.percentile(LAGS_IND[:,i],84.13 )-np.percentile(LAGS_IND[:,i],15.87)) / 2
     med_mode_diff_ind   = abs(np.median(LAGS_IND[:,i]) - getpeak(LAGS_IND[:,i]))
 
-    sig_width_sim       = abs(np.percentile(LAGS_SIM[:,i],84.13 )-np.percentile(LAGS_SIM[:,i],15.87))
+    sig_width_sim       = abs(np.percentile(LAGS_SIM[:,i],84.13 )-np.percentile(LAGS_SIM[:,i],15.87)) / 2
     med_mode_diff_sim   = abs(np.median(LAGS_SIM[:,i]) - getpeak(LAGS_SIM[:,i]))
 
-    if  sig_width_ind> 100 or med_mode_diff_ind>30: ISGOOD_IND[i]=False
-    if  sig_width_sim> 100 or med_mode_diff_sim>30: ISGOOD_SIM[i]=False
+    # Perform quality cuts
+    if  sig_width_ind> 40 or med_mode_diff_ind>100: ISGOOD_IND[i]=False
+    if  sig_width_sim> 40 or med_mode_diff_sim>100: ISGOOD_SIM[i]=False
 
-    if ISGOOD_IND:
+    ax_nocut[0].scatter(X_ind[::sparseness], Y_ind[::sparseness], alpha=alpha, s = size, c='blue')
+    ax_nocut[1].scatter(X_sim[::sparseness], Y_sim[::sparseness], alpha=alpha, s=size, c='blue')
+    if ISGOOD_IND[i]:
         ax[0].scatter(X_ind[::sparseness], Y_ind[::sparseness], alpha=alpha, s = size, c='blue')
-        X_ind_formodel.append(X_ind)
-        Y_ind_formodel.append(Y_ind)
-    if ISGOOD_SIM:
+        X_ind_formodel.append(L)
+        Y_ind_formodel.append(np.median(Y_ind))
+        E_ind_formodel.append((np.percentile(Y_ind,84.13)-np.percentile(Y_ind,15.87))/ 2)
+
+    if ISGOOD_SIM[i]:
         ax[1].scatter(X_sim[::sparseness], Y_sim[::sparseness], alpha=alpha, s = size, c='blue')
-        X_sim_formodel.append(X_sim)
-        Y_sim_formodel.append(Y_sim)
+        X_sim_formodel.append(L)
+        Y_sim_formodel.append(np.median(Y_sim))
+        E_sim_formodel.append((np.percentile(Y_sim,84.13)-np.percentile(Y_sim,15.87))/ 2)
 
 print("If %i measurements for %s, %i remain for independent fits and %i for simultaneous" %(N,CASE,sum(ISGOOD_IND),sum(ISGOOD_SIM)))
-ax[0].set_xlim(44.2, 46.5)
-ax[0].set_ylim(np.log10(1),np.log10(3200))
-fig.supxlabel("$log_{10}(\lambda L _{3000})$")
-fig.supylabel("$log_{10} ( (1+z)^{-1}  \Delta t_{%s} )$" %CASE)
+for figi, axi in zip([fig,fig_nocut],[ax,ax_nocut]):
+    axi[0].set_xlim(44.2, 46.5)
+    axi[0].set_ylim(np.log10(1),np.log10(3200))
+    figi.supxlabel("$log_{10}(\lambda L _{3000})$")
+    figi.supylabel("$log_{10} ( (1+z)^{-1}  \Delta t_{%s} )$" %CASE)
 
 
 fig.suptitle("%s Lag R-L Plot, After Quality Cut" %CASE)
 fig.savefig(fname="./RL-"+CASE+".png", format='png')
+fig_nocut.suptitle("%s Lag R-L Plot, Before Quality Cut" %CASE)
+fig_nocut.savefig(fname="./RL-"+CASE+"-nocut.png", format='png')
 
 #-----------------------------------------------
-
-X_ind_formodel = jnp.concatenate(X_ind_formodel)
-Y_ind_formodel = jnp.concatenate(Y_ind_formodel)
-
-X_sim_formodel = jnp.concatenate(X_sim_formodel)
-Y_sim_formodel = jnp.concatenate(Y_sim_formodel)
-
-#-----------------------------------------------
-def linear_mixture_model(x, y):
+def linear_mixture_model(x, y, e):
     m   = numpyro.sample("m", numpyro.distributions.Uniform(-2,2))
     b   = numpyro.sample("b", numpyro.distributions.Uniform(-50,20))
     dex =numpyro.sample("dex", numpyro.distributions.Uniform(0,10))
 
-    fg_dist = numpyro.distributions.Normal(m * x + b, dex)
+    fg_dist = numpyro.distributions.Normal(m * x + b, jnp.sqrt(dex**2+e**2))
 
     bg_mean = numpyro.sample("bg_mean", numpyro.distributions.Normal(0.0, 10))
     bg_sigma = numpyro.sample("bg_sigma", numpyro.distributions.HalfNormal(10))
-    bg_dist = numpyro.distributions.Normal(bg_mean, bg_sigma)
+    bg_dist = numpyro.distributions.Normal(bg_mean, jnp.sqrt(bg_sigma**2+e**2))
 
 
     Q = numpyro.sample("Q", numpyro.distributions.Uniform(0.0, 1.0))
@@ -133,24 +140,54 @@ def linear_mixture_model(x, y):
     with numpyro.plate("data", len(x)):
         numpyro.sample("obs", MixtureGeneral(mix, [fg_dist, bg_dist]), obs=y)
 
-def linear_model_standard(x, y):
-    m   = numpyro.sample("m", numpyro.distributions.Uniform(-2,2))
-    b   = numpyro.sample("b", numpyro.distributions.Uniform(-50,20))
+def linear_model_standard(x, y, e):
+    m   = numpyro.sample("m", numpyro.distributions.Uniform(-4,4))
+    b   = numpyro.sample("b", numpyro.distributions.Uniform(-200,40))
     dex =numpyro.sample("dex", numpyro.distributions.Uniform(0,20))
 
     with numpyro.plate("data", len(x)):
-        numpyro.sample("obs", numpyro.distributions.Normal(m*x+b, dex), obs=y)
+        numpyro.sample("obs", numpyro.distributions.Normal(m*x+b, jnp.sqrt(dex**2+e**2)), obs=y)
+
+#----------------------------------------------
+E_ind_formodel = jnp.array(E_ind_formodel )
+X_ind_formodel = jnp.array(X_ind_formodel )
+Y_ind_formodel = jnp.array(Y_ind_formodel)
+
+E_sim_formodel = jnp.array(E_sim_formodel )
+X_sim_formodel = jnp.array(X_sim_formodel )
+Y_sim_formodel = jnp.array(Y_sim_formodel )
+
+
+#----------------------------------------------
+fig2, ax2 = plt.subplots(1,2, sharex=True, sharey=True)
+for x,y,e in zip(X_ind_formodel,Y_ind_formodel,E_ind_formodel):
+    ax2[0].errorbar(x,y,yerr=e,fmt='none',alpha=0.1, c='b')
+    ax2[0].scatter(x, y, alpha=0.5, c='b', s=2)
+for x,y,e in zip(X_sim_formodel,Y_sim_formodel,E_sim_formodel):
+    ax2[1].errorbar(x,y,yerr=e,fmt='none',alpha=0.1, c='b')
+    ax2[1].scatter(x, y, alpha=0.5, c='b', s=2)
+
+ax2[0].set_xlim(44.2, 46.5)
+ax2[0].set_ylim(np.log10(1),np.log10(3200))
+
+fig2.supxlabel("$log_{10}(\lambda L _{3000})$")
+fig2.supylabel("$log_{10} ( (1+z)^{-1}  \Delta t_{%s} )$" %CASE)
+
+
+fig2.suptitle("%s Lag R-L Plot, After Quality Cut, Summarized" %CASE)
+
 #=========
 
-nburn    = 400
-nsamples = 300
-nchains  = 400
+nburn    = 1000
+nsamples = 1000
+nchains  = 20
+
 nbins    = None
 
 do_simp = True
-do_mix = True
+do_mix  = False
 
-CALC  = [False,False,False,True]
+CALC  = [True, True, False, False]
 
 #=========
 # DO NUMPYRO RUNS, GET SAMPLES ETC
@@ -163,17 +200,17 @@ if do_simp:
             num_chains=nchains,
             progress_bar=True,
         )
-        sampler_ind_simple.run(PRNGKey(3), x=X_ind_formodel, y=Y_ind_formodel)
+        sampler_ind_simple.run(PRNGKey(3), x=X_ind_formodel, y=Y_ind_formodel, e = E_ind_formodel)
 
         samples_ind_simple = sampler_ind_simple.get_samples()
         a, b = data_utils.flatten_dict(samples_ind_simple)
         np.savetxt(fname="./%s_RLchain_ind_simple.dat" % CASE, X=a, delimiter='\t')
-        del a,b, samples_ind_simple
+        del a,b, sampler_ind_simple
     else:
         a = np.loadtxt(fname="./%s_RLchain_ind_simple.dat" % CASE, delimiter='\t')
         samples_ind_simple = {'b':      a[:,0],
-                              'm':      a[:,1],
-                              'dex':    a[:,2]
+                              'dex':      a[:,1],
+                              'm':    a[:,2]
                               }
         del a
 
@@ -186,7 +223,7 @@ if do_simp:
             num_chains=nchains,
             progress_bar=True,
         )
-        sampler_sim_simple.run(PRNGKey(3), x=X_sim_formodel, y=Y_sim_formodel)
+        sampler_sim_simple.run(PRNGKey(3), x=X_sim_formodel, y=Y_sim_formodel, e = E_sim_formodel)
 
         samples_sim_simple = sampler_sim_simple.get_samples()
         a, b = data_utils.flatten_dict(samples_sim_simple)
@@ -194,9 +231,9 @@ if do_simp:
         del a, b, sampler_sim_simple
     else:
         a = np.loadtxt(fname="./%s_RLchain_sim_simple.dat" % CASE, delimiter='\t')
-        samples_ind_simple = {'b':      a[:,0],
-                              'm':      a[:,1],
-                              'dex':    a[:,2]
+        samples_sim_simple = {'b':      a[:,0],
+                              'dex':      a[:,1],
+                              'm':    a[:,2]
                               }
         del a
 
@@ -212,7 +249,7 @@ if do_mix:
             num_chains=nchains,
             progress_bar=True,
         )
-        sampler_ind_mix.run(PRNGKey(3), x=X_ind_formodel, y=Y_ind_formodel)
+        sampler_ind_mix.run(PRNGKey(3), x=X_ind_formodel, y=Y_ind_formodel, e = E_ind_formodel)
 
         samples_ind_mix     = sampler_ind_mix.get_samples()
         a, b = data_utils.flatten_dict(samples_ind_mix)
@@ -220,7 +257,7 @@ if do_mix:
         del a, b, sampler_ind_mix
     else:
         a = np.loadtxt(fname="./%s_RLchain_ind_mix.dat" % CASE, delimiter='\t')
-        samples_ind_simple = {'Q':      a[:,0],
+        samples_ind_mix = {'Q':      a[:,0],
                               'b':      a[:,1],
                               'bg_mean':    a[:,2],
                               'bg_sigma': a[:, 3],
@@ -239,7 +276,7 @@ if do_mix:
             num_chains=nchains,
             progress_bar=True,
         )
-        sampler_sim_mix.run(PRNGKey(3), x=X_sim_formodel, y=Y_sim_formodel)
+        sampler_sim_mix.run(PRNGKey(3), x=X_sim_formodel, y=Y_sim_formodel, e = E_sim_formodel)
 
         samples_sim_mix = sampler_sim_mix.get_samples()
 
@@ -248,7 +285,7 @@ if do_mix:
         del a,b, sampler_sim_mix
     else:
         a = np.loadtxt(fname="./%s_RLchain_sim_mix.dat" % CASE, delimiter='\t')
-        samples_ind_simple = {'Q':      a[:,0],
+        samples_sim_mix = {'Q':      a[:,0],
                               'b':      a[:,1],
                               'bg_mean':    a[:,2],
                               'bg_sigma': a[:, 3],
@@ -329,6 +366,8 @@ if do_mix:
 
 
 Lplot = np.linspace(44.2, 46.5)
+k = 1
+noreals = int(128/k)
 if do_simp:
     #   Get median values from MCMC runs
     b_sim_simple = np.median(samples_sim_simple['b'])
@@ -341,16 +380,28 @@ if do_simp:
     # ============
 
     #   Overlay on scatterplot
-
-    ax[0].plot(Lplot, Lplot * m_ind_simple + b_ind_simple, c='r', ls='-', lw=1,
+    ax2[0].plot(Lplot, Lplot * m_ind_simple + b_ind_simple, c='r', ls='-', lw=1,
                label='Simple Regression (Median Values)')
-    ax[0].plot(Lplot, Lplot * m_ind_simple + b_ind_simple + dex_ind_simple, c='r', ls='--', lw=1)
-    ax[0].plot(Lplot, Lplot * m_ind_simple + b_ind_simple - dex_ind_simple, c='r', ls='--', lw=1)
+    ax2[0].plot(Lplot, Lplot * m_ind_simple + b_ind_simple + dex_ind_simple, c='r', ls='--', lw=1)
+    ax2[0].plot(Lplot, Lplot * m_ind_simple + b_ind_simple - dex_ind_simple, c='r', ls='--', lw=1)
 
-    ax[1].plot(Lplot, Lplot * m_ind_simple + b_ind_simple, c='r', ls='-', lw=1,
+
+    ax2[1].plot(Lplot, Lplot * m_sim_simple + b_sim_simple, c='r', ls='-', lw=1,
                label='Simple Regression (Median Values)')
-    ax[1].plot(Lplot, Lplot * m_ind_simple + b_ind_simple + dex_ind_simple, c='r', ls='--', lw=1)
-    ax[1].plot(Lplot, Lplot * m_ind_simple + b_ind_simple - dex_ind_simple, c='r', ls='--', lw=1)
+    ax2[1].plot(Lplot, Lplot * m_sim_simple + b_sim_simple + dex_sim_simple, c='r', ls='--', lw=1)
+    ax2[1].plot(Lplot, Lplot * m_sim_simple + b_sim_simple - dex_sim_simple, c='r', ls='--', lw=1)
+
+
+    for i in range(noreals):
+        j = np.random.randint(len(samples_sim_simple['b']))
+
+        b, m, dex= samples_ind_simple['b'][j], samples_ind_simple['m'][j], samples_ind_simple['dex'][j]
+        #ax2[0].plot(Lplot, Lplot * m + b, c='r', ls='-', lw=1, alpha=0.01)
+        ax2[0].fill_between(Lplot, b + Lplot*m + dex, b + Lplot*m - dex, color="r", alpha=0.004*k, zorder = -10)
+
+        b, m, dex= samples_sim_simple['b'][j], samples_sim_simple['m'][j], samples_sim_simple['dex'][j]
+        #ax2[1].plot(Lplot, Lplot * m + b, c='r', ls='-', lw=1, alpha=0.01)
+        ax2[1].fill_between(Lplot, b + Lplot * m + dex, b + Lplot*m - dex, color="r", alpha=0.004*k, zorder = -10)
 
 if do_mix:
     #   Get median values from MCMC runs
@@ -366,18 +417,20 @@ if do_mix:
 
     #   Overlay on scatterplot
 
-    ax[0].plot(Lplot, Lplot * m_ind_mix + b_ind_mix, c='b', ls='-', lw=1,
+    ax2[0].plot(Lplot, Lplot * m_ind_mix + b_ind_mix, c='b', ls='-', lw=1,
                label='Mixture Model (Median Values)')
-    ax[0].plot(Lplot, Lplot * m_ind_mix + b_ind_mix + dex_ind_mix, c='b', ls='--', lw=1)
-    ax[0].plot(Lplot, Lplot * m_ind_mix + b_ind_mix - dex_ind_mix, c='b', ls='--', lw=1)
+    ax2[0].plot(Lplot, Lplot * m_ind_mix + b_ind_mix + dex_ind_mix, c='b', ls='--', lw=1)
+    ax2[0].plot(Lplot, Lplot * m_ind_mix + b_ind_mix - dex_ind_mix, c='b', ls='--', lw=1)
 
-    ax[1].plot(Lplot, Lplot * m_ind_mix + b_ind_mix, c='b', ls='-', lw=1,
+    ax2[1].plot(Lplot, Lplot * m_sim_mix + b_sim_mix, c='b', ls='-', lw=1,
                label='Mixture Model (Median Values)')
-    ax[1].plot(Lplot, Lplot * m_ind_mix + b_ind_mix + dex_ind_mix, c='b', ls='--', lw=1)
-    ax[1].plot(Lplot, Lplot * m_ind_mix + b_ind_mix - dex_ind_mix, c='b', ls='--', lw=1)
+    ax2[1].plot(Lplot, Lplot * m_sim_mix + b_sim_mix + dex_sim_mix, c='b', ls='--', lw=1)
+    ax2[1].plot(Lplot, Lplot * m_sim_mix + b_sim_mix - dex_sim_mix, c='b', ls='--', lw=1)
 
-fig.savefig(fname="./RL-"+CASE+"with-regs.png", format='png')
+    #============
+
+fig2.savefig(fname="./RL-"+CASE+"with-regs.png", format='png')
 
 #---------------------------------------------------------
-
+print("Done!")
 plt.show()
