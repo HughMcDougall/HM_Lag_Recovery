@@ -1,0 +1,4 @@
+  File "/data/uqhmcdou/HM_Lag_Recovery/LineFit01.py", line 125
+    np.savetxt(job_args["out_url"]+"outchain-%s.dat" %mode",out)
+                                                          ^
+SyntaxError: unterminated string literal (detected at line 125)
