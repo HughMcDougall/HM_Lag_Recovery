@@ -50,6 +50,14 @@ def main():
     job_args = SIMBA.get_args(args.i, table_url=args.table)
 
     #=======================
+    # PRINTING
+    print("JOB STARTING")
+    print("---------------------------------")
+    print("Input urls:")
+    print("\t",job_args["cont_url"])
+    print("\t",job_args["line1_url"])
+    print("\t",job_args["line2_url"])
+    #=======================
     # GET AND NORMALIZE DATA
 
     #Get targets
