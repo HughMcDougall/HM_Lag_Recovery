@@ -122,16 +122,16 @@ def main():
     out_nest_seed, out_nest_keys_seed = flatten_dict(nest_seeds)
     out_nest_full, out_nest_keys_full = flatten_dict(nest_full)
     try:
-        np.savetxt(job_args["out_url"]+"outchain-%s.dat" %mode",out)
-        np.savetxt(job_args["out_url"]+"outchain-nest-seed-%s.dat" %mode",out_nest_seed)
-        np.savetxt(job_args["out_url"]+"outchain-nest-full-%s.dat" %mode",out_nest_full)
-        np.savetxt(job_args["out_url"]+"outchain_keys-%s.dat" %mode",out_keys,fmt="%s")
+        np.savetxt(job_args["out_url"]+"outchain-%s.dat" %mode,             out)
+        np.savetxt(job_args["out_url"]+"outchain-nest-seed-%s.dat" %mode,   out_nest_seed)
+        np.savetxt(job_args["out_url"]+"outchain-nest-full-%s.dat" %mode,   out_nest_full)
+        np.savetxt(job_args["out_url"]+"outchain_keys-%s.dat" %mode,        out_keys,       fmt="%s")
     except:
         print("Unable to locate output folder %s. Saving to local runtime folder instead" %job_args["out_url"])
-        np.savetxt("./outchain-%s.dat" %mode,out)
-        np.savetxt("./outchain-nest-seed-%s.dat" %mode",out_nest_seed)
-        np.savetxt("./outchain-nest-full-%s.dat" %mode",out_nest_full)
-        np.savetxt("./outchain_keys-%s.dat" %mode",out_keys,fmt="%s")
+        np.savetxt("./outchain-%s.dat" %mode,           out)
+        np.savetxt("./outchain-nest-seed-%s.dat" %mode, out_nest_seed)
+        np.savetxt("./outchain-nest-full-%s.dat" %mode, out_nest_full)
+        np.savetxt("./outchain_keys-%s.dat" %mode,      out_keys,fmt="%s")
 
 if __name__=="__main__":
     main()
