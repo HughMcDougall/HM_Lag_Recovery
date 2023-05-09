@@ -2,9 +2,9 @@
 #SBATCH --job-name=HM_line_fit-job-%j
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task 1
-#SBATCH --mem-per-cpu=128G
+#SBATCH --mem-per-cpu=512G
 #SBATCH --time=2-00:00:00
-#SBATCH --array=0-35
+#SBATCH --array=17,18,19,20,21,22,23,24,25,26,27,28,29
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=hmgetafix@gmail.com
 #SBATCH --output=./slurm_logs/slurm-%j.out
