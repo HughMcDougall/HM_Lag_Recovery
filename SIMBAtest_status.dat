@@ -1,37 +1,37 @@
 	finished	start_time	finish_time	comment	ID	mode	cont_url	line1_url	line2_url	out_url
-0	FALSE	 	 	 	0	twoline	./Data/data_shuffle/08-10-24/cont.dat	./Data/data_shuffle/08-10-24/line1.dat	./Data/data_shuffle/08-10-24/line2.dat	./Data/data_shuffle/08-10-24/
-1	FALSE	 	 	 	1	twoline	./Data/data_shuffle/08-81-24/cont.dat	./Data/data_shuffle/08-81-24/line1.dat	./Data/data_shuffle/08-81-24/line2.dat	./Data/data_shuffle/08-81-24/
-2	FALSE	 	 	 	2	twoline	./Data/data_shuffle/10-23-24/cont.dat	./Data/data_shuffle/10-23-24/line1.dat	./Data/data_shuffle/10-23-24/line2.dat	./Data/data_shuffle/10-23-24/
-3	FALSE	 	 	 	3	twoline	./Data/data_shuffle/10-23-81/cont.dat	./Data/data_shuffle/10-23-81/line1.dat	./Data/data_shuffle/10-23-81/line2.dat	./Data/data_shuffle/10-23-81/
-4	FALSE	 	 	 	4	twoline	./Data/data_shuffle/23-08-80/cont.dat	./Data/data_shuffle/23-08-80/line1.dat	./Data/data_shuffle/23-08-80/line2.dat	./Data/data_shuffle/23-08-80/
-5	FALSE	 	 	 	5	twoline	./Data/data_shuffle/23-80-81/cont.dat	./Data/data_shuffle/23-80-81/line1.dat	./Data/data_shuffle/23-80-81/line2.dat	./Data/data_shuffle/23-80-81/
-6	FALSE	 	 	 	6	twoline	./Data/data_shuffle/24-08-23/cont.dat	./Data/data_shuffle/24-08-23/line1.dat	./Data/data_shuffle/24-08-23/line2.dat	./Data/data_shuffle/24-08-23/
-7	FALSE	 	 	 	7	twoline	./Data/data_shuffle/24-10-23/cont.dat	./Data/data_shuffle/24-10-23/line1.dat	./Data/data_shuffle/24-10-23/line2.dat	./Data/data_shuffle/24-10-23/
-8	FALSE	 	 	 	8	twoline	./Data/data_shuffle/80-24-23/cont.dat	./Data/data_shuffle/80-24-23/line1.dat	./Data/data_shuffle/80-24-23/line2.dat	./Data/data_shuffle/80-24-23/
-9	FALSE	 	 	 	9	twoline	./Data/data_shuffle/80-81-08/cont.dat	./Data/data_shuffle/80-81-08/line1.dat	./Data/data_shuffle/80-81-08/line2.dat	./Data/data_shuffle/80-81-08/
-10	FALSE	 	 	 	10	twoline	./Data/data_shuffle/81-23-08/cont.dat	./Data/data_shuffle/81-23-08/line1.dat	./Data/data_shuffle/81-23-08/line2.dat	./Data/data_shuffle/81-23-08/
-11	FALSE	 	 	 	11	twoline	./Data/data_shuffle/81-24-08/cont.dat	./Data/data_shuffle/81-24-08/line1.dat	./Data/data_shuffle/81-24-08/line2.dat	./Data/data_shuffle/81-24-08/
-12	FALSE	 	 	 	12	line1	./Data/data_shuffle/08-10-24/cont.dat	./Data/data_shuffle/08-10-24/line1.dat	./Data/data_shuffle/08-10-24/line2.dat	./Data/data_shuffle/08-10-24/
-13	FALSE	 	 	 	13	line1	./Data/data_shuffle/08-81-24/cont.dat	./Data/data_shuffle/08-81-24/line1.dat	./Data/data_shuffle/08-81-24/line2.dat	./Data/data_shuffle/08-81-24/
-14	FALSE	 	 	 	14	line1	./Data/data_shuffle/10-23-24/cont.dat	./Data/data_shuffle/10-23-24/line1.dat	./Data/data_shuffle/10-23-24/line2.dat	./Data/data_shuffle/10-23-24/
-15	FALSE	 	 	 	15	line1	./Data/data_shuffle/10-23-81/cont.dat	./Data/data_shuffle/10-23-81/line1.dat	./Data/data_shuffle/10-23-81/line2.dat	./Data/data_shuffle/10-23-81/
-16	FALSE	 	 	 	16	line1	./Data/data_shuffle/23-08-80/cont.dat	./Data/data_shuffle/23-08-80/line1.dat	./Data/data_shuffle/23-08-80/line2.dat	./Data/data_shuffle/23-08-80/
-17	FALSE	 	 	 	17	line1	./Data/data_shuffle/23-80-81/cont.dat	./Data/data_shuffle/23-80-81/line1.dat	./Data/data_shuffle/23-80-81/line2.dat	./Data/data_shuffle/23-80-81/
-18	FALSE	 	 	 	18	line1	./Data/data_shuffle/24-08-23/cont.dat	./Data/data_shuffle/24-08-23/line1.dat	./Data/data_shuffle/24-08-23/line2.dat	./Data/data_shuffle/24-08-23/
-19	FALSE	 	 	 	19	line1	./Data/data_shuffle/24-10-23/cont.dat	./Data/data_shuffle/24-10-23/line1.dat	./Data/data_shuffle/24-10-23/line2.dat	./Data/data_shuffle/24-10-23/
-20	FALSE	 	 	 	20	line1	./Data/data_shuffle/80-24-23/cont.dat	./Data/data_shuffle/80-24-23/line1.dat	./Data/data_shuffle/80-24-23/line2.dat	./Data/data_shuffle/80-24-23/
-21	FALSE	 	 	 	21	line1	./Data/data_shuffle/80-81-08/cont.dat	./Data/data_shuffle/80-81-08/line1.dat	./Data/data_shuffle/80-81-08/line2.dat	./Data/data_shuffle/80-81-08/
-22	FALSE	 	 	 	22	line1	./Data/data_shuffle/81-23-08/cont.dat	./Data/data_shuffle/81-23-08/line1.dat	./Data/data_shuffle/81-23-08/line2.dat	./Data/data_shuffle/81-23-08/
-23	FALSE	 	 	 	23	line1	./Data/data_shuffle/81-24-08/cont.dat	./Data/data_shuffle/81-24-08/line1.dat	./Data/data_shuffle/81-24-08/line2.dat	./Data/data_shuffle/81-24-08/
-24	FALSE	 	 	 	24	line2	./Data/data_shuffle/08-10-24/cont.dat	./Data/data_shuffle/08-10-24/line1.dat	./Data/data_shuffle/08-10-24/line2.dat	./Data/data_shuffle/08-10-24/
-25	FALSE	 	 	 	25	line2	./Data/data_shuffle/08-81-24/cont.dat	./Data/data_shuffle/08-81-24/line1.dat	./Data/data_shuffle/08-81-24/line2.dat	./Data/data_shuffle/08-81-24/
-26	FALSE	 	 	 	26	line2	./Data/data_shuffle/10-23-24/cont.dat	./Data/data_shuffle/10-23-24/line1.dat	./Data/data_shuffle/10-23-24/line2.dat	./Data/data_shuffle/10-23-24/
-27	FALSE	 	 	 	27	line2	./Data/data_shuffle/10-23-81/cont.dat	./Data/data_shuffle/10-23-81/line1.dat	./Data/data_shuffle/10-23-81/line2.dat	./Data/data_shuffle/10-23-81/
-28	FALSE	 	 	 	28	line2	./Data/data_shuffle/23-08-80/cont.dat	./Data/data_shuffle/23-08-80/line1.dat	./Data/data_shuffle/23-08-80/line2.dat	./Data/data_shuffle/23-08-80/
-29	FALSE	 	 	 	29	line2	./Data/data_shuffle/23-80-81/cont.dat	./Data/data_shuffle/23-80-81/line1.dat	./Data/data_shuffle/23-80-81/line2.dat	./Data/data_shuffle/23-80-81/
-30	FALSE	 	 	 	30	line2	./Data/data_shuffle/24-08-23/cont.dat	./Data/data_shuffle/24-08-23/line1.dat	./Data/data_shuffle/24-08-23/line2.dat	./Data/data_shuffle/24-08-23/
-31	FALSE	 	 	 	31	line2	./Data/data_shuffle/24-10-23/cont.dat	./Data/data_shuffle/24-10-23/line1.dat	./Data/data_shuffle/24-10-23/line2.dat	./Data/data_shuffle/24-10-23/
-32	FALSE	 	 	 	32	line2	./Data/data_shuffle/80-24-23/cont.dat	./Data/data_shuffle/80-24-23/line1.dat	./Data/data_shuffle/80-24-23/line2.dat	./Data/data_shuffle/80-24-23/
-33	FALSE	 	 	 	33	line2	./Data/data_shuffle/80-81-08/cont.dat	./Data/data_shuffle/80-81-08/line1.dat	./Data/data_shuffle/80-81-08/line2.dat	./Data/data_shuffle/80-81-08/
-34	FALSE	 	 	 	34	line2	./Data/data_shuffle/81-23-08/cont.dat	./Data/data_shuffle/81-23-08/line1.dat	./Data/data_shuffle/81-23-08/line2.dat	./Data/data_shuffle/81-23-08/
-35	FALSE	 	 	 	35	line2	./Data/data_shuffle/81-24-08/cont.dat	./Data/data_shuffle/81-24-08/line1.dat	./Data/data_shuffle/81-24-08/line2.dat	./Data/data_shuffle/81-24-08/
+0	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	0	twoline	./Data/data_shuffle/08-10-24/cont.dat	./Data/data_shuffle/08-10-24/line1.dat	./Data/data_shuffle/08-10-24/line2.dat	./Data/data_shuffle/08-10-24/
+1	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	1	twoline	./Data/data_shuffle/08-81-24/cont.dat	./Data/data_shuffle/08-81-24/line1.dat	./Data/data_shuffle/08-81-24/line2.dat	./Data/data_shuffle/08-81-24/
+2	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	2	twoline	./Data/data_shuffle/10-23-24/cont.dat	./Data/data_shuffle/10-23-24/line1.dat	./Data/data_shuffle/10-23-24/line2.dat	./Data/data_shuffle/10-23-24/
+3	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	3	twoline	./Data/data_shuffle/10-23-81/cont.dat	./Data/data_shuffle/10-23-81/line1.dat	./Data/data_shuffle/10-23-81/line2.dat	./Data/data_shuffle/10-23-81/
+4	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	4	twoline	./Data/data_shuffle/23-08-80/cont.dat	./Data/data_shuffle/23-08-80/line1.dat	./Data/data_shuffle/23-08-80/line2.dat	./Data/data_shuffle/23-08-80/
+5	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	5	twoline	./Data/data_shuffle/23-80-81/cont.dat	./Data/data_shuffle/23-80-81/line1.dat	./Data/data_shuffle/23-80-81/line2.dat	./Data/data_shuffle/23-80-81/
+6	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	6	twoline	./Data/data_shuffle/24-08-23/cont.dat	./Data/data_shuffle/24-08-23/line1.dat	./Data/data_shuffle/24-08-23/line2.dat	./Data/data_shuffle/24-08-23/
+7	False	 	 	 	7	twoline	./Data/data_shuffle/24-10-23/cont.dat	./Data/data_shuffle/24-10-23/line1.dat	./Data/data_shuffle/24-10-23/line2.dat	./Data/data_shuffle/24-10-23/
+8	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	8	twoline	./Data/data_shuffle/80-24-23/cont.dat	./Data/data_shuffle/80-24-23/line1.dat	./Data/data_shuffle/80-24-23/line2.dat	./Data/data_shuffle/80-24-23/
+9	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	9	twoline	./Data/data_shuffle/80-81-08/cont.dat	./Data/data_shuffle/80-81-08/line1.dat	./Data/data_shuffle/80-81-08/line2.dat	./Data/data_shuffle/80-81-08/
+10	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	10	twoline	./Data/data_shuffle/81-23-08/cont.dat	./Data/data_shuffle/81-23-08/line1.dat	./Data/data_shuffle/81-23-08/line2.dat	./Data/data_shuffle/81-23-08/
+11	False	13:06 Tue 09/05	               	Job started /w 600 chains, 600 samples, 1000 burn in and 1 cores	11	twoline	./Data/data_shuffle/81-24-08/cont.dat	./Data/data_shuffle/81-24-08/line1.dat	./Data/data_shuffle/81-24-08/line2.dat	./Data/data_shuffle/81-24-08/
+12	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	12	line1	./Data/data_shuffle/08-10-24/cont.dat	./Data/data_shuffle/08-10-24/line1.dat	./Data/data_shuffle/08-10-24/line2.dat	./Data/data_shuffle/08-10-24/
+13	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	13	line1	./Data/data_shuffle/08-81-24/cont.dat	./Data/data_shuffle/08-81-24/line1.dat	./Data/data_shuffle/08-81-24/line2.dat	./Data/data_shuffle/08-81-24/
+14	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	14	line1	./Data/data_shuffle/10-23-24/cont.dat	./Data/data_shuffle/10-23-24/line1.dat	./Data/data_shuffle/10-23-24/line2.dat	./Data/data_shuffle/10-23-24/
+15	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	15	line1	./Data/data_shuffle/10-23-81/cont.dat	./Data/data_shuffle/10-23-81/line1.dat	./Data/data_shuffle/10-23-81/line2.dat	./Data/data_shuffle/10-23-81/
+16	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	16	line1	./Data/data_shuffle/23-08-80/cont.dat	./Data/data_shuffle/23-08-80/line1.dat	./Data/data_shuffle/23-08-80/line2.dat	./Data/data_shuffle/23-08-80/
+17	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	17	line1	./Data/data_shuffle/23-80-81/cont.dat	./Data/data_shuffle/23-80-81/line1.dat	./Data/data_shuffle/23-80-81/line2.dat	./Data/data_shuffle/23-80-81/
+18	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	18	line1	./Data/data_shuffle/24-08-23/cont.dat	./Data/data_shuffle/24-08-23/line1.dat	./Data/data_shuffle/24-08-23/line2.dat	./Data/data_shuffle/24-08-23/
+19	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	19	line1	./Data/data_shuffle/24-10-23/cont.dat	./Data/data_shuffle/24-10-23/line1.dat	./Data/data_shuffle/24-10-23/line2.dat	./Data/data_shuffle/24-10-23/
+20	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	20	line1	./Data/data_shuffle/80-24-23/cont.dat	./Data/data_shuffle/80-24-23/line1.dat	./Data/data_shuffle/80-24-23/line2.dat	./Data/data_shuffle/80-24-23/
+21	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	21	line1	./Data/data_shuffle/80-81-08/cont.dat	./Data/data_shuffle/80-81-08/line1.dat	./Data/data_shuffle/80-81-08/line2.dat	./Data/data_shuffle/80-81-08/
+22	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	22	line1	./Data/data_shuffle/81-23-08/cont.dat	./Data/data_shuffle/81-23-08/line1.dat	./Data/data_shuffle/81-23-08/line2.dat	./Data/data_shuffle/81-23-08/
+23	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	23	line1	./Data/data_shuffle/81-24-08/cont.dat	./Data/data_shuffle/81-24-08/line1.dat	./Data/data_shuffle/81-24-08/line2.dat	./Data/data_shuffle/81-24-08/
+24	False	13:06 Tue 09/05	               	Job started /w 600 chains, 300 samples, 1000 burn in and 1 cores	24	line2	./Data/data_shuffle/08-10-24/cont.dat	./Data/data_shuffle/08-10-24/line1.dat	./Data/data_shuffle/08-10-24/line2.dat	./Data/data_shuffle/08-10-24/
+25	False	 	 	 	25	line2	./Data/data_shuffle/08-81-24/cont.dat	./Data/data_shuffle/08-81-24/line1.dat	./Data/data_shuffle/08-81-24/line2.dat	./Data/data_shuffle/08-81-24/
+26	False	 	 	 	26	line2	./Data/data_shuffle/10-23-24/cont.dat	./Data/data_shuffle/10-23-24/line1.dat	./Data/data_shuffle/10-23-24/line2.dat	./Data/data_shuffle/10-23-24/
+27	False	 	 	 	27	line2	./Data/data_shuffle/10-23-81/cont.dat	./Data/data_shuffle/10-23-81/line1.dat	./Data/data_shuffle/10-23-81/line2.dat	./Data/data_shuffle/10-23-81/
+28	False	 	 	 	28	line2	./Data/data_shuffle/23-08-80/cont.dat	./Data/data_shuffle/23-08-80/line1.dat	./Data/data_shuffle/23-08-80/line2.dat	./Data/data_shuffle/23-08-80/
+29	False	 	 	 	29	line2	./Data/data_shuffle/23-80-81/cont.dat	./Data/data_shuffle/23-80-81/line1.dat	./Data/data_shuffle/23-80-81/line2.dat	./Data/data_shuffle/23-80-81/
+30	False	 	 	 	30	line2	./Data/data_shuffle/24-08-23/cont.dat	./Data/data_shuffle/24-08-23/line1.dat	./Data/data_shuffle/24-08-23/line2.dat	./Data/data_shuffle/24-08-23/
+31	False	 	 	 	31	line2	./Data/data_shuffle/24-10-23/cont.dat	./Data/data_shuffle/24-10-23/line1.dat	./Data/data_shuffle/24-10-23/line2.dat	./Data/data_shuffle/24-10-23/
+32	False	 	 	 	32	line2	./Data/data_shuffle/80-24-23/cont.dat	./Data/data_shuffle/80-24-23/line1.dat	./Data/data_shuffle/80-24-23/line2.dat	./Data/data_shuffle/80-24-23/
+33	False	 	 	 	33	line2	./Data/data_shuffle/80-81-08/cont.dat	./Data/data_shuffle/80-81-08/line1.dat	./Data/data_shuffle/80-81-08/line2.dat	./Data/data_shuffle/80-81-08/
+34	False	 	 	 	34	line2	./Data/data_shuffle/81-23-08/cont.dat	./Data/data_shuffle/81-23-08/line1.dat	./Data/data_shuffle/81-23-08/line2.dat	./Data/data_shuffle/81-23-08/
+35	False	 	 	 	35	line2	./Data/data_shuffle/81-24-08/cont.dat	./Data/data_shuffle/81-24-08/line1.dat	./Data/data_shuffle/81-24-08/line2.dat	./Data/data_shuffle/81-24-08/
