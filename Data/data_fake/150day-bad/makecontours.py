@@ -7,26 +7,16 @@ SIGNAL = np.loadtxt("banded_data.dat")
 
 #==================================
 
-DATA = np.loadtxt("outchain.dat")
-NEST = np.loadtxt("outchain-nest.dat")
-KEYS = np.loadtxt("outchain_keys.dat", dtype="str_")
+DATA = np.loadtxt("outchain-twoline.dat")
+NEST_SEED = np.loadtxt("outchain-nest-seed-twoline.dat")
+NEST_FULL = np.loadtxt("outchain-nest-full-twoline.dat")
+KEYS = np.loadtxt("outchain_keys-twoline.dat", dtype="str_")
 
-c = ChainConsumer()
-c.add_chain(DATA, parameters = list(KEYS))
-c.add_chain(NEST, parameters = list(KEYS))
-
-truth = {"rel_amps_0" : 1,
-         "rel_amps_1" : 1,
-         "log_sigma_c" : 0,
-         "log_tau" : 5.99,
-         "means_0":0,
-         "means_1":0,
-         "means_2":0}
-
+#=======================================
 extents = {"amps_0" :       (0,10),
          "amps_1" :         (0,10),
          "log_sigma_c" :    (-2.5,2.5),
-         "log_tau" :        (3,15),
+         "log_tau" :        (1,8),
          "means_0":         (-20,20),
          "means_1":         (-20,20),
          "means_2":         (-20,20),
@@ -34,27 +24,44 @@ extents = {"amps_0" :       (0,10),
          "lags_2":          (0,800)
            }
 
-c.plotter.plot(filename ="./contours.png", truth=truth, extents=extents)
+#=======================================
+#DOUBLE LINE FITS
 
-#==================================
-fig,ax = plt.subplots(2,1)
-cols = ['b','r','g']
+c = ChainConsumer()
+c.add_chain(DATA, parameters = list(KEYS), name = "HMC")
+c.add_chain(NEST_SEED, parameters = list(KEYS), name = "Nest Seeds")
+c.add_chain(NEST_FULL, parameters = list(KEYS), name = "Nest Full")
 
-for file,c in zip(["cont.dat", "line1.dat", "line2.dat"],cols):
-    data = np.loadtxt(file)
-    ax[0].errorbar(data[:,0],   data[:,1],  yerr=data[:,2], fmt='none', c=c)
-    
-    
-ax[0].set_ylim([-5,5])
-ax[0].axhline(0,c='k', ls='--', lw=0.5)
+c.plotter.plot(filename ="./contours.png", extents=extents)
+c.plotter.plot(filename ="./contours_lagsonly.png", extents=extents, parameters = ["lags_1","lags_2"])
 
-for band,c in zip([0,1,2], cols):
-    inds = np.where(SIGNAL[:,3]==band)[0]
-    
-    ax[1].errorbar(SIGNAL[:,0][inds],SIGNAL[:,1][inds],yerr=SIGNAL[:,2][inds],fmt='none',c=c)
-    
-    
-ax[1].set_ylim([-5,5])
-ax[1].axhline(0,c='k', ls='--', lw=0.5)
+c.remove_chain()
+c.remove_chain()
 
-fig.savefig("signal.png",fmt="png")
+c.plotter.plot(filename ="./contours_clean.png", extents=extents)
+c.plotter.plot(filename ="./contours_clean_lagsonly.png", extents=extents, parameters = ["lags_1","lags_2"])
+c.plotter.plot(filename ="./contours_clean_contonly.png", extents=extents, parameters = ["log_sigma_c","log_tau"])
+c.plotter.plot_distributions(filename = "./summary_clean.png", extents=extents)
+
+#=======================================
+#SINGLE LINE COMPARISON
+
+DATA_1 = np.loadtxt("outchain-line1.dat")
+DATA_2 = np.loadtxt("outchain-line2.dat")
+
+c2 = ChainConsumer()
+c2.add_chain(DATA[:,:2], parameters = ["lags_1","lags_2"], name = "Simultaneous Fitting")
+c2.add_chain(np.array([DATA_1[:,0],DATA_2[:,0]]).T, parameters = ["lags_1","lags_2"], name = "Independent Fitting")
+c2.plotter.plot(filename ="./contours_linecomparison.jpg", extents=extents)
+
+
+#=======================================
+#Timescale Comparison
+IND_SIGMA_C = np.concatenate([DATA_1[:,1],DATA_2[:,1]])
+IND_TAU = np.concatenate([DATA_1[:,2],DATA_2[:,2]])
+
+c3 = ChainConsumer()
+c3.add_chain(np.array([DATA[:,2],DATA[:,3]]).T, parameters = ["log_sigma_c","log_tau"], name = "Simultaneous Fitting")
+c3.add_chain(np.array([IND_SIGMA_C,IND_TAU]).T, parameters = ["log_sigma_c","log_tau"], name = "Independent Fitting")
+c3.plotter.plot(filename ="./contours_linecomparison_cont.jpg", extents=extents)
+

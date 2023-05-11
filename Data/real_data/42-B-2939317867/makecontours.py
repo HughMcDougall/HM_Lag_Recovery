@@ -7,16 +7,22 @@ SIGNAL = np.loadtxt("banded_data.dat")
 
 #==================================
 
-DATA = np.loadtxt("outchain.dat")
-NEST_SEED = np.loadtxt("outchain-nest-seed.dat")
-NEST_FULL = np.loadtxt("outchain-nest-full.dat")
-KEYS = np.loadtxt("outchain_keys.dat", dtype="str_")
-
+try:
+    DATA = np.loadtxt("outchain.dat")
+    NEST_SEED = np.loadtxt("outchain-nest-seed.dat")
+    NEST_FULL = np.loadtxt("outchain-nest-full.dat")
+    KEYS = np.loadtxt("outchain_keys.dat", dtype="str_")
+except:
+    
+    DATA = np.loadtxt("outchain-twoline.dat")
+    NEST_SEED = np.loadtxt("outchain-twoline-nest-seed.dat")
+    NEST_FULL = np.loadtxt("outchain-twoline-nest-full.dat")
+    KEYS = np.loadtxt("outchain-twoline_keys.dat", dtype="str_")
 #=======================================
 extents = {"amps_0" :       (0,10),
          "amps_1" :         (0,10),
-         "log_sigma_c" :    (-2.5,2.5),
-         "log_tau" :        (1,8),
+         "log_sigma_c" :    (-2,4),
+         "log_tau" :        (2,14),
          "means_0":         (-20,20),
          "means_1":         (-20,20),
          "means_2":         (-20,20),

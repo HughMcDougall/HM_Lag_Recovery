@@ -26,33 +26,54 @@ import config
 
 if __name__=="__main__":
     print("Starting unit tests")
+    print("Beginning signal gen")
 
     # load some example data
-    rootfol = "../Data/data_fake/360day/"
-    #rootfol = "../Data/data_fake/150day-bad/"
-    #rootfol = "../Data/real_data/19-A-2925858108/"
+    targ = "79-A-2970604169"
+    rootfol = "../Data/real_data/"
+    rootfol+= targ
+    rootfol+="/"
 
-    truelag1=350
-    truelag2=360
+    # load some example data
+    targ = "81-24-08"
+    rootfol = "../Data/data_shuffle/"
+    rootfol+= targ
+    rootfol+="/"
 
-    cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
-    line1 = array_to_lc(np.loadtxt(rootfol + "line1.dat"))
-    line2 = array_to_lc(np.loadtxt(rootfol + "line2.dat"))
+    try:
+        cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
+        line1 = array_to_lc(np.loadtxt(rootfol + "Hbeta.dat"))
+        line2 = array_to_lc(np.loadtxt(rootfol + "MGII.dat"))
 
-    '''
-    cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
-    line1 = array_to_lc(np.loadtxt(rootfol + "MGII.dat"))
-    line2 = array_to_lc(np.loadtxt(rootfol + "Hbeta.dat"))
-    '''
+        #Make into banded format
+        data  = lc_to_banded([cont, line1,line2])
+        data = data_utils.data_tform(data, data_utils.normalize_tform(data))
+    except:
+        try:
+            cont = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
+            line1 = array_to_lc(np.loadtxt(rootfol + "MGII.dat"))
+            line2 = array_to_lc(np.loadtxt(rootfol + "CIV.dat"))
 
-    #Make into banded format
-    data  = lc_to_banded([cont, line1,line2])
-    #data = data_utils.data_tform(data, data_utils.normalize_tform(data))
+            # Make into banded format
+            data = lc_to_banded([cont, line1, line2])
+            data = data_utils.data_tform(data, data_utils.normalize_tform(data))
+        except:
+            cont = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
+            line1 = array_to_lc(np.loadtxt(rootfol + "line1.dat"))
+            line2 = array_to_lc(np.loadtxt(rootfol + "line2.dat"))
+
+            # Make into banded format
+            data = lc_to_banded([cont, line1, line2])
+            data = data_utils.data_tform(data, data_utils.normalize_tform(data))
+
+
+
+    #------------------------------------------------------------------
 
     fixed_params = data_utils.default_params(np.max(data["bands"]))
     '''
     fixed_params["log_tau"] = 2.9
-    fixed_params["log_sigma_c"] = 0.55
+    fixed_params["log_sigma_c"] = 0.55  
     fixed_params["rel_amps"] = jnp.array([0.9,0.4])
     fixed_params["means"] = jnp.array([-2.3,0.55,0])
     '''
@@ -61,7 +82,7 @@ if __name__=="__main__":
     gridloss = lambda x,y: loss(data, fixed_params | {"lags": jnp.array([x,y])})
     #gridloss = lambda x,y: loss(data, {"lags": jnp.array([x,160]), "log_tau": y})
 
-    nplot = 128
+    nplot = 256
     lag1 = np.linspace(0,config.lag_max, nplot)
     lag2 = np.linspace(0,config.lag_max, nplot)
     #log_taus = np.linspace(config.log_tau_min, config.log_tau_max, nplot)
@@ -69,8 +90,8 @@ if __name__=="__main__":
     X = lag1
     Y = lag2
 
-    true_x = 350
-    true_y = 360
+    true_x = 150
+    true_y = 160
 
     xlabel = "$\Delta t_{1}$"
     ylabel = "$\Delta t_{2}$"
@@ -139,10 +160,15 @@ if __name__=="__main__":
 
     #-----------------------------------
     fig,ax=plt.subplots(2,1)
-    ax[0].plot(X, np.sum(Z3, axis=0)* (X[1]-X[0]))
-    ax[1].plot(Y, np.sum(Z3, axis=1)* (Y[1]-Y[0]))
+    ax[0].plot(X, np.sum(Z3, axis=0)* (X[1]-X[0]), c='k')
+    ax[1].plot(Y, np.sum(Z3, axis=1)[::-1]* (Y[1]-Y[0]), c='k')
 
     norm = loss(data, fixed_params | {"lags": jnp.array([10000,10000])})
     norm = np.exp(norm)
-    print(norm)
+
+    fig.suptitle("Marginalized Likelihood")
+    ax[0].set_xlabel(xlabel)
+    ax[1].set_xlabel(ylabel)
+    fig.tight_layout()
+
     plt.show()

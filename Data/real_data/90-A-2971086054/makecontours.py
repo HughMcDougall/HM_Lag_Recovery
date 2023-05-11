@@ -3,9 +3,10 @@ from chainconsumer import ChainConsumer
 import numpy as np
 import matplotlib.pylab as plt
 
-SIGNAL = np.loadtxt("banded_data.dat")
+
 
 #==================================
+SIGNAL = np.loadtxt("banded_data.dat")
 
 DATA = np.loadtxt("outchain.dat")
 NEST_SEED = np.loadtxt("outchain-nest-seed.dat")

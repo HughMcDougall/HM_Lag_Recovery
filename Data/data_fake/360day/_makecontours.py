@@ -56,8 +56,8 @@ c.plotter.plot(filename ="./contours_clean_lagsonly.png", extents=extents, param
 
 print("Loading doing JAVELIN contours")
 cjav = ChainConsumer()
-cjav.add_chain(DATA_JAVELIN, name = "Simultaneous Line Fitting")
-cjav.add_chain(DATA_JAVELIN_LINES, name = "Independent Line Fitting")
+cjav.add_chain(DATA_JAVELIN, name = "Simultaneous Line Fitting", color='purple')
+cjav.add_chain(DATA_JAVELIN_LINES, name = "Independent Line Fitting", color='cyan')
 cjav.plotter.plot(filename ="./contours_lagsonly_JAVELIN.png", extents=extents)
 
 #=======================================
@@ -72,7 +72,7 @@ Ys_JAV_LINES = [DATA_JAVELIN_LINES["lags_2"][s_jav*i:s_jav*(i+1)] for i in range
 Xs_LITMUS = [DATA_LITMUS["lags_1"][s_litmus*i:s_litmus*(i+1)] for i in range(nchains)]
 Ys_LITMUS = [DATA_LITMUS["lags_2"][s_litmus*i:s_litmus*(i+1)] for i in range(nchains)]
 
-fig,ax=plt.subplots(3,1,figsize=(5,15))
+fig,ax=plt.subplots(1,3,figsize=(15,5))
 
 for i in range(nchains):
     ax[0].plot(Xs_JAV[i],       Ys_JAV[i],          lw=0.1)
