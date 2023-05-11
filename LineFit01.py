@@ -38,7 +38,7 @@ def main():
     ap.add_argument('-i', '--i',                        metavar='i',            type=int,       help='job itteration number',               default=0)
     ap.add_argument('-Nchains', '--Nchains',            metavar='Nchains',      type=int,       help='Number of MCMC chains',               default=0)
     ap.add_argument('-Nburn', '--Nburn',                metavar='Nburn',        type=int,       help='Number of burn-in steps',             default=200)
-    ap.add_argument('-', '--Nsamples',          metavar='Nsamples',     type=int,       help='Number of samples',                   default=200)
+    ap.add_argument('-Nsamples', '--Nsamples',          metavar='Nsamples',     type=int,       help='Number of samples',                   default=200)
     ap.add_argument('-NS_numlive', '--NS_numlive',      metavar='NS_numlive',   type=int,       help='Number of live points in NS',         default=0)
     ap.add_argument('-NS_maxevals', '--NS_maxevals',    metavar='NS_maxevals',  type=int,       help='Max samples in NS',                   default=0)
     ap.add_argument('-step_size', '--step_size',        metavar='step_size',    type=float,     help='Step Size in HMC',                    default=1E-3)
