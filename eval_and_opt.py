@@ -115,6 +115,7 @@ def scan(banded_data, scan_params, fixed_params = "None"):
             fixed_params.pop(key)
 
 #=================================================================
+
 def realize(data, params, Tout, band=0, nreals=1, seed=0):
     '''
     :param data:
@@ -214,6 +215,7 @@ if __name__=="__main__":
             print("log prob for  lag1, lag2 =%i:\t%f"  %(lag2, loss(band, params={"lags": jnp.array([lag1, lag2])})))
 
 
+    #Realization Generation
     print("Doing several realizations")
 
     plt.figure()
@@ -230,15 +232,10 @@ if __name__=="__main__":
     for i in range(10):
         print(i)
 
-        if i<5:
-            dL=0
-        else:
-            dL=360
-
         yplot = realize(data = banded_2line,
-                        params = {"lags": jnp.array([lag1+dL,lag2+dL]),
+                        params = {"lags": jnp.array([lag1,lag2]),
                                   'means': jnp.array([0,0,0]),
-                                  'log_tau': np.log(7)},
+                                  'log_tau': np.log(400)},
                         Tout = Tgrid ,
                         seed=i, band=1)
 

@@ -187,7 +187,7 @@ nbins    = None
 do_simp = True
 do_mix  = False
 
-CALC  = [True, True, False, False]
+CALC  = [False, False, False, False]
 
 #=========
 # DO NUMPYRO RUNS, GET SAMPLES ETC

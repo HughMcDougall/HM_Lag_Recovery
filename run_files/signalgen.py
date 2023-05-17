@@ -31,16 +31,11 @@ if __name__=="__main__":
     print("Beginning signal gen")
 
     # load some example data
-    targ = "79-A-2970604169"
-    rootfol = "../Data/real_data/"
+    targ = "360day"
+    rootfol = "../Data/data_fake/"
     rootfol+= targ
     rootfol+="/"
 
-    # load some example data
-    targ = "81-24-08"
-    rootfol = "../Data/data_shuffle/"
-    rootfol+= targ
-    rootfol+="/"
 
     try:
         cont  = array_to_lc(np.loadtxt(rootfol + "cont.dat"))
@@ -92,7 +87,7 @@ if __name__=="__main__":
 
     baseline = np.max(data['T']) - np.min(data['T'])
     Tplot = np.linspace(-baseline*0.25, baseline*1.25, n_grid)
-    fig, ax = plt.subplots(3,1, figsize=(10,5), sharex=True)
+    fig, ax = plt.subplots(3,1, figsize=(10,5), sharex=True, sharey=True)
 
     colours = ['b','r','g']
 
@@ -133,6 +128,8 @@ if __name__=="__main__":
     fig.supxlabel("Time (days)")
     fig.supylabel("Signal Variation")
     ax[0].set_xlim(0, baseline * 1.1)
+
+    ax[0].set_ylim(-4,4)
 
     line1name, line2name = "Line 1", "Line 2"
     if targ[3] == 'A': line1name, line2name = '$H \\beta $', 'MGII'

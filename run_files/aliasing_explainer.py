@@ -5,6 +5,7 @@ sys.path.append("..")
 import numpy as np
 import matplotlib.pylab as plt
 from data_utils import array_to_lc
+from eval_and_opt import realize
 
 import numpy as np
 import matplotlib.pylab as plt
@@ -12,6 +13,8 @@ from numpy import dot
 from numpy.linalg import inv as inv
 from scipy.stats import poisson
 from copy import deepcopy as copy
+
+#-----------------------------------------
 
 
 def covar(T, T2=None, tau=1):
@@ -85,6 +88,8 @@ T1 = T[::2] + T[1]
 Y1 = Y[::2]
 E1 = E[::2]
 
+Y1*=4
+
 T2 = T[1::2]
 Y2 = Y[1::2]
 E2 = E[1::2]
@@ -95,7 +100,7 @@ Y2+=np.random.randn(len(Y2))
 np.random.shuffle(Y2)
 
 # load some example data
-tau = 100
+tau = 400
 tmin,tmax = 0,2500
 ymin,ymax = -4,4
 
@@ -134,14 +139,30 @@ Z3 = Z3[:,::-1].T
 
 
 #=======================================
-plt.figure(figsize=(4, 2.0))
+plt.figure(figsize=(5,3))
 
-plt.imshow(Z1, aspect="auto",extent=[tmin,tmax,ymin,ymax], cmap='binary')
-plt.errorbar(T1,Y1,yerr=E1*1.96,fmt="none",capsize=2,label="Measurements")
+#plt.imshow(Z1, aspect="auto",extent=[tmin,tmax,ymin,ymax], cmap='binary')
+
 plt.xlabel("Time")
 plt.ylabel("Signal")
-plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.0, 0, 0))
+
+
+
+data = {'T': T1,
+        'Y': Y1,
+        'E': E1,
+        'bands': np.zeros_like(T1, dtype='int32')}
+
+for i in range(1):
+    print(i)
+    Y = realize(data, params={'log_tau': np.log(tau)}, Tout=Tplot, seed=i)
+
+    plt.plot(Tplot,Y,lw=1.0,alpha= 1.0, c='blue')
+plt.errorbar(T1,Y1,yerr=E1*1.96,fmt="none",capsize=5,label="Measurements")
+
 plt.tight_layout()
+plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.0, 0, 0))
+plt.ylim([-4,4])
 plt.show()
 
 T_m2 = T2
@@ -217,7 +238,7 @@ for i in range(len(lags)):
     likelihoods[i] = likelihood(Y,K)
 likelihoods/=np.max(likelihoods)
 
-plt.figure(figsize=(5,2.5))
+plt.figure(figsize=(6,4))
 plt.plot(lags,np.log(likelihoods))
 dt = T1[1] - T1[0]
 for i in range(int(max(lags)//dt)+1):
@@ -241,3 +262,5 @@ plt.xlim(-tau,tmax)
 plt.tight_layout()
 
 plt.show()
+
+#---------------------
